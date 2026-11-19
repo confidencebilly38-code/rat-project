@@ -173,9 +173,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
-    // Permissions
-    implementation("com.github.gabriellima:permissionsdispatcher:4.9.0")
-    kapt("com.github.gabriellima:permissionsdispatcher-processor:4.9.0")
+    // Permissions - using AndroidX Activity Result APIs instead
+    // implementation("com.github.gabriellima:permissionsdispatcher:4.9.0")
+    // kapt("com.github.gabriellima:permissionsdispatcher-processor:4.9.0")
 
     // WorkManager for background tasks
     implementation("androidx.work:work-runtime-ktx:2.9.0")
