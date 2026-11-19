@@ -81,6 +81,7 @@ android {
         viewBinding = true
         dataBinding = true
         compose = false
+        buildConfig = true
     }
 
     packaging {
