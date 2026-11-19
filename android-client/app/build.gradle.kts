@@ -50,7 +50,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            matchingFallbacks = listOf("release")
+            matchingFallbacks = mutableListOf("release")
         }
         getByName("release") {
             isDebuggable = false
@@ -83,7 +83,7 @@ android {
         compose = false
     }
 
-    packagingOptions {
+    packaging {
         resources {
             excludes += listOf(
                 "META-INF/DEPENDENCIES",
@@ -102,7 +102,7 @@ android {
     }
 
     // Build variants for different C2 configurations
-    flavorDimensions = "c2"
+    flavorDimensions += "c2"
     productFlavors {
         create("development") {
             dimension = "c2"
