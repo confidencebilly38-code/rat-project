@@ -1,0 +1,14 @@
+# Local SDK/NDK paths - Copy to local.properties and modify
+# This file is gitignored - each developer has their own
+
+# Linux/macOS
+sdk.dir=/home/user/Android/Sdk
+ndk.dir=/home/user/Android/Sdk/ndk/26.1.10909125
+
+# Windows (uncomment and modify)
+# sdk.dir=C\:\\Users\\user\\AppData\\Local\\Android\\Sdk
+# ndk.dir=C\:\\Users\\user\\AppData\\Local\\Android\\Sdk\\ndk\\26.1.10909125
+
+# GitHub Codespaces (auto-configured)
+# sdk.dir=/opt/android-sdk
+# ndk.dir=/opt/android-ndk

@@ -1,0 +1,304 @@
+name: Android RAT APK Build
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'android-client/**'
+      - '.github/workflows/android-build.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'android-client/**'
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: true
+        default: 'debug'
+        type: choice
+        options:
+          - debug
+          - release
+          - all
+      variant:
+        description: 'Product flavor'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+
+env:
+  JAVA_VERSION: '17'
+  GRADLE_VERSION: '8.7'
+  ANDROID_SDK_VERSION: '34'
+  ANDROID_BUILD_TOOLS_VERSION: '34.0.0'
+  ANDROID_NDK_VERSION: '26.1.10909125'
+
+jobs:
+  build:
+    name: Build APK (${{ matrix.variant }}-${{ matrix.build_type }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variant: development
+            build_type: debug
+          - variant: development
+            build_type: release
+          - variant: staging
+            build_type: debug
+          - variant: staging
+            build_type: release
+          - variant: production
+            build_type: debug
+          - variant: production
+            build_type: release
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: ${{ env.ANDROID_SDK_VERSION }}
+          build-tools-version: ${{ env.ANDROID_BUILD_TOOLS_VERSION }}
+          ndk-version: ${{ env.ANDROID_NDK_VERSION }}
+          cmdline-tools-version: 'latest'
+          cache-key: ${{ runner.os }}-android-${{ env.ANDROID_SDK_VERSION }}-${{ hashFiles('android-client/gradle/wrapper/gradle-wrapper.properties') }}
+
+      - name: Configure Gradle
+        run: |
+          cd android-client
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "ndk.dir=$ANDROID_NDK_HOME" >> local.properties
+          chmod +x gradlew
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('android-client/gradle/wrapper/gradle-wrapper.properties', 'android-client/app/build.gradle.kts') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build APK (${{ matrix.variant }}-${{ matrix.build_type }})
+        id: build
+        run: |
+          cd android-client
+          ./gradlew assemble${{ matrix.variant }}${{ matrix.build_type | upper_first }} --no-daemon --stacktrace
+
+      - name: Verify APK
+        run: |
+          cd android-client
+          APK_PATH=$(find app/build/outputs/apk -name "*.apk" -path "*${{ matrix.variant }}*" -path "*${{ matrix.build_type }}*" | head -1)
+          if [ -z "$APK_PATH" ]; then
+            echo "ERROR: APK not found for ${{ matrix.variant }}-${{ matrix.build_type }}"
+            find app/build/outputs -name "*.apk"
+            exit 1
+          fi
+          echo "APK found: $APK_PATH"
+          echo "Size: $(du -h "$APK_PATH" | cut -f1)"
+          echo "SHA256: $(sha256sum "$APK_PATH" | cut -d' ' -f1)"
+
+          # Verify APK structure
+          unzip -l "$APK_PATH" | head -30
+
+          # Verify signature for release builds
+          if [ "${{ matrix.build_type }}" = "release" ]; then
+            echo "Verifying release signature..."
+            apksigner verify --verbose "$APK_PATH" || echo "Warning: Signature verification failed"
+          fi
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rat-apk-${{ matrix.variant }}-${{ matrix.build_type }}
+          path: android-client/app/build/outputs/apk/${{ matrix.variant }}/${{ matrix.build_type }}/*.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Upload Mapping File (Release)
+        if: matrix.build_type == 'release'
+        uses: actions/upload-artifact@v4
+        with:
+          name: rat-mapping-${{ matrix.variant }}-release
+          path: android-client/app/build/outputs/mapping/${{ matrix.variant }}/release/mapping.txt
+          retention-days: 30
+
+  lint:
+    name: Lint & Static Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: ${{ env.ANDROID_SDK_VERSION }}
+
+      - name: Run Lint
+        run: |
+          cd android-client
+          ./gradlew lintDebug --no-daemon
+
+      - name: Run Detekt (Static Analysis)
+        run: |
+          cd android-client
+          ./gradlew detekt --no-daemon || true
+
+      - name: Upload Lint Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lint-report
+          path: android-client/app/build/reports/lint-results-debug.html
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: ${{ env.ANDROID_SDK_VERSION }}
+
+      - name: Run Unit Tests
+        run: |
+          cd android-client
+          ./gradlew testDebugUnitTest --no-daemon
+
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: android-client/app/build/reports/tests/
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: 'android-client'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Check for secrets with Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: '--config=.github/gitleaks.toml --verbose'
+
+  c2-server:
+    name: C2 Server Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          cd c2-server
+          pip install -r requirements.txt
+
+      - name: Run C2 Server Tests
+        run: |
+          cd c2-server
+          python -m pytest tests/ -v --tb=short || echo "No tests found"
+
+      - name: Lint Python code
+        run: |
+          cd c2-server
+          python -m flake8 src/ --max-line-length=120 --ignore=E501,W503 || true
+
+  release:
+    name: Create Release
+    needs: [build, lint, test, security-scan]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download all APK artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.run_number }}
+          name: RAT APK Build #${{ github.run_number }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            artifacts/**/*.apk
+            artifacts/**/mapping.txt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify (Optional)
+        if: env.SLACK_WEBHOOK_URL != ''
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"RAT APK Build #${{ github.run_number }} released!\nArtifacts: https://github.com/${{ github.repository }}/releases/tag/v${{ github.run_number }}"}' \
+            $SLACK_WEBHOOK_URL

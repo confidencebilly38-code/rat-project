@@ -1,0 +1,40 @@
+[extend]
+# Use default gitleaks rules
+useDefault = true
+
+[allowlist]
+description = "Allowlist for RAT project"
+paths = [
+  "(?i)android-client/app/build/",
+  "(?i)android-client/.gradle/",
+  "(?i)android-client/build/",
+  "(?i)c2-server/uploads/",
+  "(?i)c2-server/data/",
+  "(?i)c2-server/logs/",
+  "(?i).devcontainer/",
+  "(?i)docs/",
+  "(?i)*.md",
+  "(?i)*.txt",
+  "(?i)*.gradle",
+  "(?i)*.kts",
+  "(?i)*.xml",
+  "(?i)gradlew*",
+]
+
+# Allow patterns that look like secrets but are actually placeholders/config
+regexes = [
+  '''(?i)c2_host\s*=\s*["']?(?:localhost|127\.0\.0\.1|10\.0\.2\.2|0\.0\.0\.0|staging-c2\.example\.com|c2\.example\.com)["']?''',
+  '''(?i)c2_port\s*=\s*["']?(?:8080|8443|443)["']?''',
+  '''(?i)c2_protocol\s*=\s*["']?(?:http|https)["']?''',
+  '''(?i)android\.debug\.keystore''',
+  '''(?i)ratrelease''',
+  '''(?i)ratkey''',
+  '''(?i)ratadmin123''',
+  '''(?i)test[_-]?(?:device|emulator|avd)''',
+]
+
+# Allow specific files that contain test/example secrets
+files = [
+  "android-client/app/debug.keystore",
+  "android-client/app/release.keystore",
+]

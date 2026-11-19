@@ -1,0 +1,104 @@
+# RAT Project .gitignore
+
+# Gradle
+.gradle/
+build/
+android-client/build/
+android-client/app/build/
+android-client/.gradle/
+local.properties
+*.keystore
+!android-client/local.properties.template
+
+# Android
+*.apk
+*.ap_
+*.aab
+*.aar
+output/
+captures/
+*.class
+*.dex
+*.oat
+*.odex
+*.so
+*.jar
+*.war
+*.ear
+
+# Kotlin
+*.kt.metadata
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs
+*.log
+logs/
+android-client/app/*.log
+c2-server/logs/
+c2-server/data/*.db
+c2-server/data/*.db-journal
+c2-server/uploads/
+
+# Testing
+android-client/app/build/outputs/androidTest-results/
+android-client/app/build/outputs/code_coverage/
+android-client/app/build/outputs/lint-results*.html
+test-results/
+coverage/
+
+# C2 Server
+c2-server/__pycache__/
+c2-server/*.pyc
+c2-server/.pytest_cache/
+c2-server/.coverage
+c2-server/htmlcov/
+c2-server/.mypy_cache/
+c2-server/venv/
+c2-server/env/
+c2-server/.env
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Keys & Certificates
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Misc
+*.bak
+*.tmp
+*.temp
+*.orig
+*.patch
+.terraform.lock.hcl

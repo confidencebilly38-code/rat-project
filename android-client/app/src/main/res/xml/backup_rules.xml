@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <exclude domain="sharedpref" path="rat_preferences.xml"/>
+    <exclude domain="sharedpref" path="rat_secure_preferences.xml"/>
+    <exclude domain="database" path="rat_database.db"/>
+    <exclude domain="file" path="cache/"/>
+    <exclude domain="file" path="files/"/>
+    <exclude domain="file" path="logs/"/>
+    <exclude domain="file" path="media/"/>
+    <exclude domain="external" path="."/>
+    <exclude domain="device_storage" path="."/>
+</full-backup-content>
