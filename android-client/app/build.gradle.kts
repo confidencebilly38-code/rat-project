@@ -50,7 +50,7 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
-            matchingFallbacks = mutableListOf("release")
+            matchingFallbacks.add("release")
         }
         getByName("release") {
             isDebuggable = false
