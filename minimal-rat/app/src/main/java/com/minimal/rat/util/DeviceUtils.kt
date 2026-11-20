@@ -18,6 +18,7 @@ import android.telephony.TelephonyManager
 import android.util.Base64
 import android.annotation.SuppressLint
 import org.json.JSONObject
+import org.json.JSONArray
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -84,7 +85,7 @@ class DeviceUtils private constructor() {
             val projection = arrayOf("_id", "address", "body", "date", "type", "read")
             val cursor = context.contentResolver.query(uri, projection, null, null, "date DESC LIMIT $limit")
             val arr = JSONObject()
-            val list = java.util.ArrayList<JSONObject>()
+            val jsonArray = JSONArray()
             cursor?.use { c ->
                 while (c.moveToNext()) {
                     val obj = JSONObject()
@@ -94,10 +95,10 @@ class DeviceUtils private constructor() {
                     obj.put("date", c.getLong(3))
                     obj.put("type", when (c.getInt(4)) { 1 -> "INBOX"; 2 -> "SENT"; else -> "OTHER" })
                     obj.put("read", c.getInt(5) == 1)
-                    list.put(obj)
+                    jsonArray.put(obj)
                 }
             }
-            arr.put("sms", list)
+            arr.put("sms", jsonArray)
             return arr
         }
 
@@ -106,7 +107,7 @@ class DeviceUtils private constructor() {
             val projection = arrayOf(CallLog.Calls._ID, CallLog.Calls.NUMBER, CallLog.Calls.TYPE, CallLog.Calls.DATE, CallLog.Calls.DURATION)
             val cursor = context.contentResolver.query(uri, projection, null, null, "${CallLog.Calls.DATE} DESC LIMIT $limit")
             val arr = JSONObject()
-            val list = java.util.ArrayList<JSONObject>()
+            val jsonArray = JSONArray()
             cursor?.use { c ->
                 while (c.moveToNext()) {
                     val obj = JSONObject()
@@ -115,10 +116,10 @@ class DeviceUtils private constructor() {
                     obj.put("type", when (c.getInt(2)) { CallLog.Calls.INCOMING_TYPE -> "INCOMING"; CallLog.Calls.OUTGOING_TYPE -> "OUTGOING"; CallLog.Calls.MISSED_TYPE -> "MISSED"; else -> "OTHER" })
                     obj.put("date", c.getLong(3))
                     obj.put("duration", c.getLong(4))
-                    list.put(obj)
+                    jsonArray.put(obj)
                 }
             }
-            arr.put("calls", list)
+            arr.put("calls", jsonArray)
             return arr
         }
 
@@ -127,7 +128,7 @@ class DeviceUtils private constructor() {
             val projection = arrayOf(ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts.HAS_PHONE_NUMBER)
             val cursor = context.contentResolver.query(uri, projection, null, null, "${ContactsContract.Contacts.DISPLAY_NAME} ASC LIMIT $limit")
             val arr = JSONObject()
-            val list = java.util.ArrayList<JSONObject>()
+            val jsonArray = JSONArray()
             cursor?.use { c ->
                 while (c.moveToNext()) {
                     val id = c.getLong(0)
@@ -135,10 +136,10 @@ class DeviceUtils private constructor() {
                     obj.put("id", id)
                     obj.put("name", c.getString(1))
                     obj.put("has_phone", c.getInt(2) > 0)
-                    list.put(obj)
+                    jsonArray.put(obj)
                 }
             }
-            arr.put("contacts", list)
+            arr.put("contacts", jsonArray)
             return arr
         }
 
