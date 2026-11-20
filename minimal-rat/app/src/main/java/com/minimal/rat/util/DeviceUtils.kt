@@ -171,17 +171,17 @@ class DeviceUtils private constructor() {
             val pm = context.packageManager
             val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
             val arr = JSONObject()
-            val list = java.util.ArrayList<JSONObject>()
+            val jsonArray = JSONArray()
             for (app in apps) {
                 val isSystem = (app.flags and android.content.pm.ApplicationInfo.FLAG_SYSTEM) != 0
                 if (!isSystem) {
-                    list.put(JSONObject().apply {
-                        put("package", app.packageName)
-                        put("name", pm.getApplicationLabel(app).toString())
-                    })
+                    val obj = JSONObject()
+                    obj.put("package", app.packageName)
+                    obj.put("name", pm.getApplicationLabel(app).toString())
+                    jsonArray.put(obj)
                 }
             }
-            arr.put("apps", list)
+            arr.put("apps", jsonArray)
             return arr
         }
 
@@ -191,17 +191,17 @@ class DeviceUtils private constructor() {
                 val level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
                 val scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
                 val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-                JSONObject().apply {
-                    put("level", level)
-                    put("scale", scale)
-                    put("pct", if (scale > 0) level * 100 / scale else -1)
-                    put("status", when (status) {
-                        BatteryManager.BATTERY_STATUS_CHARGING -> "CHARGING"
-                        BatteryManager.BATTERY_STATUS_DISCHARGING -> "DISCHARGING"
-                        BatteryManager.BATTERY_STATUS_FULL -> "FULL"
-                        else -> "UNKNOWN"
-                    })
-                }
+                val obj = JSONObject()
+                obj.put("level", level)
+                obj.put("scale", scale)
+                obj.put("pct", if (scale > 0) level * 100 / scale else -1)
+                obj.put("status", when (status) {
+                    BatteryManager.BATTERY_STATUS_CHARGING -> "CHARGING"
+                    BatteryManager.BATTERY_STATUS_DISCHARGING -> "DISCHARGING"
+                    BatteryManager.BATTERY_STATUS_FULL -> "FULL"
+                    else -> "UNKNOWN"
+                })
+                obj
             } else JSONObject()
         }
 
