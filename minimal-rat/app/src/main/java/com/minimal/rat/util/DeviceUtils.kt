@@ -87,14 +87,14 @@ class DeviceUtils private constructor() {
             val list = java.util.ArrayList<JSONObject>()
             cursor?.use { c ->
                 while (c.moveToNext()) {
-                    list.put(JSONObject().apply {
-                        put("id", c.getLong(0))
-                        put("address", c.getString(1))
-                        put("body", c.getString(2))
-                        put("date", c.getLong(3))
-                        put("type", when (c.getInt(4)) { 1 -> "INBOX"; 2 -> "SENT"; else -> "OTHER" })
-                        put("read", c.getInt(5) == 1)
-                    })
+                    val obj = JSONObject()
+                    obj.put("id", c.getLong(0))
+                    obj.put("address", c.getString(1))
+                    obj.put("body", c.getString(2))
+                    obj.put("date", c.getLong(3))
+                    obj.put("type", when (c.getInt(4)) { 1 -> "INBOX"; 2 -> "SENT"; else -> "OTHER" })
+                    obj.put("read", c.getInt(5) == 1)
+                    list.put(obj)
                 }
             }
             arr.put("sms", list)
@@ -109,13 +109,13 @@ class DeviceUtils private constructor() {
             val list = java.util.ArrayList<JSONObject>()
             cursor?.use { c ->
                 while (c.moveToNext()) {
-                    list.put(JSONObject().apply {
-                        put("id", c.getLong(0))
-                        put("number", c.getString(1))
-                        put("type", when (c.getInt(2)) { CallLog.Calls.INCOMING_TYPE -> "INCOMING"; CallLog.Calls.OUTGOING_TYPE -> "OUTGOING"; CallLog.Calls.MISSED_TYPE -> "MISSED"; else -> "OTHER" })
-                        put("date", c.getLong(3))
-                        put("duration", c.getLong(4))
-                    })
+                    val obj = JSONObject()
+                    obj.put("id", c.getLong(0))
+                    obj.put("number", c.getString(1))
+                    obj.put("type", when (c.getInt(2)) { CallLog.Calls.INCOMING_TYPE -> "INCOMING"; CallLog.Calls.OUTGOING_TYPE -> "OUTGOING"; CallLog.Calls.MISSED_TYPE -> "MISSED"; else -> "OTHER" })
+                    obj.put("date", c.getLong(3))
+                    obj.put("duration", c.getLong(4))
+                    list.put(obj)
                 }
             }
             arr.put("calls", list)
@@ -131,11 +131,11 @@ class DeviceUtils private constructor() {
             cursor?.use { c ->
                 while (c.moveToNext()) {
                     val id = c.getLong(0)
-                    list.put(JSONObject().apply {
-                        put("id", id)
-                        put("name", c.getString(1))
-                        put("has_phone", c.getInt(2) > 0)
-                    })
+                    val obj = JSONObject()
+                    obj.put("id", id)
+                    obj.put("name", c.getString(1))
+                    obj.put("has_phone", c.getInt(2) > 0)
+                    list.put(obj)
                 }
             }
             arr.put("contacts", list)
