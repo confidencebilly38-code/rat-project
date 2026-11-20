@@ -167,11 +167,6 @@ dependencies {
     // JSON serialization - using Gson only
     implementation("com.google.code.gson:gson:2.11.0")
 
-    // Database - Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-
     // Encryption
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
     implementation("com.github.tony19:logback-android:3.0.0")
