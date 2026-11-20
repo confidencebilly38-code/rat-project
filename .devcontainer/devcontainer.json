@@ -38,7 +38,7 @@
       }
     }
   },
-  "forwardPorts": [8080, 8081, 5000, 5554, 5555],
+  "forwardPorts": [8080, 8081, 8083, 42474, 42475, 5000, 5554, 5555],
   "portsAttributes": {
     "8080": {
       "label": "C2 Server HTTP",
@@ -46,6 +46,18 @@
     },
     "8081": {
       "label": "C2 Server WebSocket",
+      "onAutoForward": "notify"
+    },
+    "8083": {
+      "label": "Dashboard HTTP",
+      "onAutoForward": "notify"
+    },
+    "42474": {
+      "label": "C2 Socket.IO",
+      "onAutoForward": "notify"
+    },
+    "42475": {
+      "label": "C2 HTTP API",
       "onAutoForward": "notify"
     },
     "5000": {
@@ -61,7 +73,7 @@
       "onAutoForward": "ignore"
     }
   },
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "postCreateCommand": "bash .devcontainer/setup.sh && bash .devcontainer/setup-bot.sh",
   "postStartCommand": "bash .devcontainer/start.sh",
   "remoteUser": "vscode",
   "containerEnv": {
