@@ -77,6 +77,14 @@ android {
         )
     }
 
+    // KAPT workaround for Kotlin 2.0 duplicate class issue
+    kapt {
+        correctErrorTypes = true
+        javacOptions {
+            option("-Xlint:-options")
+        }
+    }
+
     buildFeatures {
         viewBinding = true
         dataBinding = true
@@ -157,10 +165,10 @@ dependencies {
     // JSON serialization - using Gson only
     implementation("com.google.code.gson:gson:2.11.0")
 
-    // Database - Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    // Database - Room (2.6.2+ has better Kotlin 2.0 support)
+    implementation("androidx.room:room-runtime:2.6.2")
+    implementation("androidx.room:room-ktx:2.6.2")
+    kapt("androidx.room:room-compiler:2.6.2")
 
     // Encryption
     implementation("androidx.security:security-crypto:1.1.0-alpha06")
