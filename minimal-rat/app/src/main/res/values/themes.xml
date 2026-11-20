@@ -1,0 +1,16 @@
+<resources>
+    <style name="Theme.MinimalRAT" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#6200EE</item>
+        <item name="colorPrimaryVariant">#3700B3</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorSecondary">#03DAC5</item>
+        <item name="colorOnSecondary">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="colorOnBackground">@android:color/black</item>
+    </style>
+
+    <style name="Theme.MinimalRAT.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
