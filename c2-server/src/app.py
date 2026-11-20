@@ -1114,4 +1114,4 @@ if __name__ == '__main__':
     logger.info(f"Default admin: {Config.ADMIN_USERNAME} / ratadmin123")
 
     # Run with SocketIO
-    socketio.run(app, host=Config.HOST, port=Config.PORT, debug=Config.DEBUG)
+    socketio.run(app, host=Config.HOST, port=Config.PORT, debug=Config.DEBUG, allow_unsafe_werkzeug=True)
