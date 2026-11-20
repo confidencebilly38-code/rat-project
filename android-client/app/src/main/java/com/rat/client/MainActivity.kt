@@ -19,8 +19,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.rat.client.crypto.EncryptionUtils
-import com.rat.client.service.{MediaProjectionService, RatService, ScreenCaptureService}
-import com.rat.client.util.{DeviceUtils, NetworkUtils, PermissionsManager, PreferencesManager, SystemUtils}
+import com.rat.client.service.MediaProjectionService
+import com.rat.client.service.RatService
+import com.rat.client.service.ScreenCaptureService
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.NetworkUtils
+import com.rat.client.util.PermissionsManager
+import com.rat.client.util.PreferencesManager
+import com.rat.client.util.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -10,7 +10,9 @@ import android.util.Base64
 import android.util.Log
 import com.rat.client.crypto.EncryptionUtils
 import com.rat.client.service.RatService
-import com.rat.client.util.{DeviceUtils, PreferencesManager, SystemUtils}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.PreferencesManager
+import com.rat.client.util.SystemUtils
 
 class SmsCommandReceiver : BroadcastReceiver() {
 

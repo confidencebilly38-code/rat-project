@@ -7,7 +7,10 @@ import android.os.Build
 import android.util.Log
 import androidx.multidex.MultiDex
 import com.rat.client.service.RatService
-import com.rat.client.util.{DeviceUtils, EncryptionUtils, PreferencesManager, SystemUtils}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.EncryptionUtils
+import com.rat.client.util.PreferencesManager
+import com.rat.client.util.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

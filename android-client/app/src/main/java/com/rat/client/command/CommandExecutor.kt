@@ -26,8 +26,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.rat.client.RatApplication
 import com.rat.client.crypto.EncryptionUtils
-import com.rat.client.service.{MediaProjectionService, ScreenCaptureService}
-import com.rat.client.util.{DeviceUtils, FileUtils, NetworkUtils, PermissionsManager, SystemUtils}
+import com.rat.client.service.MediaProjectionService
+import com.rat.client.service.ScreenCaptureService
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.FileUtils
+import com.rat.client.util.NetworkUtils
+import com.rat.client.util.PermissionsManager
+import com.rat.client.util.SystemUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

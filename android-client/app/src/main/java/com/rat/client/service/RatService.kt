@@ -19,7 +19,9 @@ import com.google.gson.reflect.TypeToken
 import com.rat.client.R
 import com.rat.client.command.CommandExecutor
 import com.rat.client.crypto.EncryptionUtils
-import com.rat.client.util.{DeviceUtils, NetworkUtils, PreferencesManager}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.NetworkUtils
+import com.rat.client.util.PreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

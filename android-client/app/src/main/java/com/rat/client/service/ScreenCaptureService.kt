@@ -26,7 +26,9 @@ import com.google.gson.Gson
 import com.rat.client.RatApplication
 import com.rat.client.crypto.EncryptionUtils
 import com.rat.client.service.RatService
-import com.rat.client.util.{DeviceUtils, FileUtils, SystemUtils}
+import com.rat.client.util.DeviceUtils
+import com.rat.client.util.FileUtils
+import com.rat.client.util.SystemUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
