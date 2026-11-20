@@ -45,7 +45,7 @@ class EncryptionUtils private constructor() {
         private var masterKey: SecretKey? = null
         private var initialized = false
 
-        @JvmStatic
+        
         fun init(context: Context) {
             if (initialized) return
             try {
@@ -79,12 +79,12 @@ class EncryptionUtils private constructor() {
 
         // ===== Symmetric Encryption (AES-GCM) =====
 
-        @JvmStatic
+        
         fun encrypt(plaintext: String): String {
             return encrypt(plaintext.toByteArray(StandardCharsets.UTF_8))
         }
 
-        @JvmStatic
+        
         fun encrypt(plaintext: ByteArray): String {
             val key = masterKey ?: throw IllegalStateException("Encryption not initialized")
             val iv = generateIv()
@@ -102,13 +102,13 @@ class EncryptionUtils private constructor() {
             return Base64.encodeToString(result, Base64.NO_WRAP)
         }
 
-        @JvmStatic
+        
         fun decrypt(ciphertextB64: String): String {
             val decrypted = decrypt(Base64.decode(ciphertextB64, Base64.NO_WRAP))
             return String(decrypted, StandardCharsets.UTF_8)
         }
 
-        @JvmStatic
+        
         fun decrypt(ciphertext: ByteArray): ByteArray {
             val key = masterKey ?: throw IllegalStateException("Encryption not initialized")
             if (ciphertext.size < GCM_IV_LENGTH + GCM_TAG_LENGTH) {
@@ -133,14 +133,14 @@ class EncryptionUtils private constructor() {
 
         // ===== Asymmetric Encryption (RSA) =====
 
-        @JvmStatic
+        
         fun generateKeyPair(): KeyPair {
             val kpg = KeyPairGenerator.getInstance("RSA")
             kpg.initialize(RSA_KEY_SIZE)
             return kpg.generateKeyPair()
         }
 
-        @JvmStatic
+        
         fun encryptRSA(plaintext: String, publicKey: String): String {
             val key = decodePublicKey(publicKey)
             val cipher = Cipher.getInstance(RSA_TRANSFORMATION)
@@ -149,7 +149,7 @@ class EncryptionUtils private constructor() {
             return Base64.encodeToString(encrypted, Base64.NO_WRAP)
         }
 
-        @JvmStatic
+        
         fun decryptRSA(ciphertextB64: String, privateKey: String): String {
             val key = decodePrivateKey(privateKey)
             val cipher = Cipher.getInstance(RSA_TRANSFORMATION)
@@ -158,12 +158,12 @@ class EncryptionUtils private constructor() {
             return String(decrypted, StandardCharsets.UTF_8)
         }
 
-        @JvmStatic
+        
         fun publicKeyToString(publicKey: java.security.PublicKey): String {
             return Base64.encodeToString(publicKey.encoded, Base64.NO_WRAP)
         }
 
-        @JvmStatic
+        
         fun privateKeyToString(privateKey: java.security.PrivateKey): String {
             return Base64.encodeToString(privateKey.encoded, Base64.NO_WRAP)
         }
@@ -184,26 +184,26 @@ class EncryptionUtils private constructor() {
 
         // ===== Hashing =====
 
-        @JvmStatic
+        
         fun sha256(data: String): String {
             return sha256(data.toByteArray(StandardCharsets.UTF_8))
         }
 
-        @JvmStatic
+        
         fun sha256(data: ByteArray): String {
             val digest = MessageDigest.getInstance("SHA-256")
             val hash = digest.digest(data)
             return hash.joinToString("") { "%02x".format(it) }
         }
 
-        @JvmStatic
+        
         fun sha512(data: String): String {
             val digest = MessageDigest.getInstance("SHA-512")
             val hash = digest.digest(data.toByteArray(StandardCharsets.UTF_8))
             return hash.joinToString("") { "%02x".format(it) }
         }
 
-        @JvmStatic
+        
         fun md5(data: String): String {
             val digest = MessageDigest.getInstance("MD5")
             val hash = digest.digest(data.toByteArray(StandardCharsets.UTF_8))
@@ -212,12 +212,12 @@ class EncryptionUtils private constructor() {
 
         // ===== HMAC =====
 
-        @JvmStatic
+        
         fun hmacSha256(data: String, key: String): String {
             return hmacSha256(data.toByteArray(StandardCharsets.UTF_8), key.toByteArray(StandardCharsets.UTF_8))
         }
 
-        @JvmStatic
+        
         fun hmacSha256(data: ByteArray, key: ByteArray): String {
             val mac = Mac.getInstance(HMAC_ALGORITHM)
             val secretKey = SecretKeySpec(key, HMAC_ALGORITHM)
@@ -228,7 +228,7 @@ class EncryptionUtils private constructor() {
 
         // ===== Secure SharedPreferences =====
 
-        @JvmStatic
+        
         fun getEncryptedPrefs(context: Context): androidx.security.crypto.EncryptedSharedPreferences {
             val masterKey = MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -245,7 +245,7 @@ class EncryptionUtils private constructor() {
 
         // ===== File Encryption =====
 
-        @JvmStatic
+        
         fun encryptFile(inputFile: java.io.File, outputFile: java.io.File): Boolean {
             return try {
                 val key = masterKey ?: throw IllegalStateException("Encryption not initialized")
@@ -275,7 +275,7 @@ class EncryptionUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun decryptFile(inputFile: java.io.File, outputFile: java.io.File): Boolean {
             return try {
                 val key = masterKey ?: throw IllegalStateException("Encryption not initialized")
@@ -307,21 +307,21 @@ class EncryptionUtils private constructor() {
 
         // ===== Random Generation =====
 
-        @JvmStatic
+        
         fun generateRandomBytes(length: Int): ByteArray {
             val bytes = ByteArray(length)
             SecureRandom().nextBytes(bytes)
             return bytes
         }
 
-        @JvmStatic
+        
         fun generateRandomString(length: Int): String {
             val chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
             val random = SecureRandom()
             return (0 until length).map { chars[random.nextInt(chars.length)] }.joinToString("")
         }
 
-        @JvmStatic
+        
         fun generateToken(): String {
             val bytes = generateRandomBytes(32)
             return Base64.encodeToString(bytes, Base64.URL_SAFE or Base64.NO_WRAP)
@@ -329,12 +329,12 @@ class EncryptionUtils private constructor() {
 
         // ===== Data Integrity =====
 
-        @JvmStatic
+        
         fun signData(data: String, privateKey: String): String {
             return signData(data.toByteArray(StandardCharsets.UTF_8), privateKey)
         }
 
-        @JvmStatic
+        
         fun signData(data: ByteArray, privateKey: String): String {
             val key = decodePrivateKey(privateKey)
             val signature = java.security.Signature.getInstance("SHA256withRSA")
@@ -344,12 +344,12 @@ class EncryptionUtils private constructor() {
             return Base64.encodeToString(signed, Base64.NO_WRAP)
         }
 
-        @JvmStatic
+        
         fun verifySignature(data: String, signatureB64: String, publicKey: String): Boolean {
             return verifySignature(data.toByteArray(StandardCharsets.UTF_8), signatureB64, publicKey)
         }
 
-        @JvmStatic
+        
         fun verifySignature(data: ByteArray, signatureB64: String, publicKey: String): Boolean {
             try {
                 val key = decodePublicKey(publicKey)

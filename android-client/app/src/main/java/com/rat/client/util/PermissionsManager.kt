@@ -112,47 +112,47 @@ class PermissionsManager private constructor() {
         )
 
         // All permissions needed by the RAT
-        @JvmStatic
+        
         val ALL_PERMISSIONS: List<String> = PERMISSION_GROUPS.values.flatten().distinct().toList()
 
-        @JvmStatic
+        
         fun checkPermission(context: Context, permission: String): Boolean {
             return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         }
 
-        @JvmStatic
+        
         fun checkPermissions(context: Context, permissions: List<String>): Map<String, Boolean> {
             return permissions.associateWith { checkPermission(context, it) }
         }
 
-        @JvmStatic
+        
         fun checkAllPermissions(context: Context): Map<String, Boolean> {
             return checkPermissions(context, ALL_PERMISSIONS)
         }
 
-        @JvmStatic
+        
         fun getGrantedPermissions(context: Context): List<String> {
             return ALL_PERMISSIONS.filter { checkPermission(context, it) }
         }
 
-        @JvmStatic
+        
         fun getDeniedPermissions(context: Context): List<String> {
             return ALL_PERMISSIONS.filter { !checkPermission(context, it) }
         }
 
-        @JvmStatic
+        
         fun requestPermissions(activity: Activity, permissions: List<String>, requestCode: Int) {
             ActivityCompat.requestPermissions(activity, permissions.toTypedArray(), requestCode)
         }
 
-        @JvmStatic
+        
         fun shouldShowRequestPermissionRationale(activity: Activity, permission: String): Boolean {
             return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)
         }
 
         // ===== Special Permissions =====
 
-        @JvmStatic
+        
         fun hasOverlayPermission(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 return Settings.canDrawOverlays(context)
@@ -160,7 +160,7 @@ class PermissionsManager private constructor() {
             return true
         }
 
-        @JvmStatic
+        
         fun requestOverlayPermission(activity: Activity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasOverlayPermission(activity)) {
                 val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION).apply {
@@ -170,7 +170,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasWriteSettingsPermission(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 return Settings.System.canWrite(context)
@@ -178,7 +178,7 @@ class PermissionsManager private constructor() {
             return true
         }
 
-        @JvmStatic
+        
         fun requestWriteSettingsPermission(activity: Activity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasWriteSettingsPermission(activity)) {
                 val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS).apply {
@@ -188,7 +188,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasIgnoreBatteryOptimization(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 val pm = context.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
@@ -197,7 +197,7 @@ class PermissionsManager private constructor() {
             return true
         }
 
-        @JvmStatic
+        
         fun requestIgnoreBatteryOptimization(activity: Activity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !hasIgnoreBatteryOptimization(activity)) {
                 val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
@@ -207,14 +207,14 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasUsageStatsPermission(context: Context): Boolean {
             val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
             val mode = appOps.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, Process.myUid(), context.packageName)
             return mode == AppOpsManager.MODE_ALLOWED
         }
 
-        @JvmStatic
+        
         fun requestUsageStatsPermission(activity: Activity) {
             if (!hasUsageStatsPermission(activity)) {
                 val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
@@ -222,7 +222,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasNotificationListenerPermission(context: Context): Boolean {
             val enabledListeners = Settings.Secure.getString(
                 context.contentResolver,
@@ -231,7 +231,7 @@ class PermissionsManager private constructor() {
             return enabledListeners.contains(context.packageName)
         }
 
-        @JvmStatic
+        
         fun requestNotificationListenerPermission(activity: Activity) {
             if (!hasNotificationListenerPermission(activity)) {
                 val intent = Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
@@ -239,7 +239,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasInstallPackagesPermission(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 return context.packageManager.canRequestPackageInstalls()
@@ -247,7 +247,7 @@ class PermissionsManager private constructor() {
             return true
         }
 
-        @JvmStatic
+        
         fun requestInstallPackagesPermission(activity: Activity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !hasInstallPackagesPermission(activity)) {
                 val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
@@ -257,7 +257,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasManageExternalStoragePermission(context: Context): Boolean {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 return Environment.isExternalStorageManager()
@@ -265,7 +265,7 @@ class PermissionsManager private constructor() {
             return true
         }
 
-        @JvmStatic
+        
         fun requestManageExternalStoragePermission(activity: Activity) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !hasManageExternalStoragePermission(activity)) {
                 val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
@@ -275,27 +275,27 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun hasAccessibilityPermission(context: Context, serviceClass: Class<*>): Boolean {
             val accessibilityManager = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as android.view.accessibility.AccessibilityManager
             val services = accessibilityManager.getEnabledAccessibilityServiceList(android.view.accessibility.AccessibilityServiceInfo.FEEDBACK_ALL_MASK)
             return services.any { it.id.contains(serviceClass.name) }
         }
 
-        @JvmStatic
+        
         fun requestAccessibilityPermission(activity: Activity) {
             val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
             activity.startActivity(intent)
         }
 
-        @JvmStatic
+        
         fun hasDeviceAdminPermission(context: Context, adminClass: Class<*>): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as android.app.admin.DevicePolicyManager
             val adminComponent = android.content.ComponentName(context, adminClass)
             return dpm.isAdminActive(adminComponent)
         }
 
-        @JvmStatic
+        
         fun requestDeviceAdminPermission(activity: Activity, adminClass: Class<*>) {
             val dpm = activity.getSystemService(Context.DEVICE_POLICY_SERVICE) as android.app.admin.DevicePolicyManager
             val adminComponent = android.content.ComponentName(activity, adminClass)
@@ -308,19 +308,19 @@ class PermissionsManager private constructor() {
 
         // ===== Permission Groups =====
 
-        @JvmStatic
+        
         fun checkPermissionGroup(context: Context, group: String): Map<String, Boolean> {
             val permissions = PERMISSION_GROUPS[group] ?: emptyArray()
             return checkPermissions(context, permissions.toList())
         }
 
-        @JvmStatic
+        
         fun requestPermissionGroup(activity: Activity, group: String, requestCode: Int) {
             val permissions = PERMISSION_GROUPS[group] ?: emptyArray()
             requestPermissions(activity, permissions.toList(), requestCode)
         }
 
-        @JvmStatic
+        
         fun getGroupStatus(context: Context): Map<String, Map<String, Boolean>> {
             return PERMISSION_GROUPS.mapValues { (group, perms) ->
                 group to checkPermissions(context, perms.toList())
@@ -329,7 +329,7 @@ class PermissionsManager private constructor() {
 
         // ===== Auto Request Flow =====
 
-        @JvmStatic
+        
         fun requestAllCriticalPermissions(activity: Activity) {
             // Priority order for critical permissions
             val criticalGroups = listOf(
@@ -375,7 +375,7 @@ class PermissionsManager private constructor() {
 
         // ===== Runtime Permission Result Handler =====
 
-        @JvmStatic
+        
         fun handlePermissionResult(
             requestCode: Int,
             permissions: Array<String>,
@@ -398,7 +398,7 @@ class PermissionsManager private constructor() {
 
         // ===== Permission Utilities =====
 
-        @JvmStatic
+        
         fun getPermissionDescription(permission: String): String {
             return when (permission) {
                 Manifest.permission.READ_EXTERNAL_STORAGE -> "Read files on device"
@@ -435,7 +435,7 @@ class PermissionsManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun isPermissionDangerous(permission: String): Boolean {
             val dangerousPermissions = setOf(
                 Manifest.permission.READ_CALENDAR,

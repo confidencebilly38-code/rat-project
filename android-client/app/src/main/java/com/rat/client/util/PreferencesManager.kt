@@ -17,7 +17,7 @@ class PreferencesManager private constructor() {
         private var securePrefs: SharedPreferences? = null
         private var initialized = false
 
-        @JvmStatic
+        
         fun init(context: Context) {
             if (initialized) return
             standardPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -44,13 +44,13 @@ class PreferencesManager private constructor() {
 
         // ===== String =====
 
-        @JvmStatic
+        
         fun putString(key: String, value: String, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putString(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getString(key: String, defaultValue: String = "", secure: Boolean = false): String {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getString(key, defaultValue) ?: defaultValue
@@ -58,13 +58,13 @@ class PreferencesManager private constructor() {
 
         // ===== Int =====
 
-        @JvmStatic
+        
         fun putInt(key: String, value: Int, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putInt(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getInt(key: String, defaultValue: Int = 0, secure: Boolean = false): Int {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getInt(key, defaultValue)
@@ -72,13 +72,13 @@ class PreferencesManager private constructor() {
 
         // ===== Long =====
 
-        @JvmStatic
+        
         fun putLong(key: String, value: Long, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putLong(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getLong(key: String, defaultValue: Long = 0L, secure: Boolean = false): Long {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getLong(key, defaultValue)
@@ -86,13 +86,13 @@ class PreferencesManager private constructor() {
 
         // ===== Float =====
 
-        @JvmStatic
+        
         fun putFloat(key: String, value: Float, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putFloat(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getFloat(key: String, defaultValue: Float = 0f, secure: Boolean = false): Float {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getFloat(key, defaultValue)
@@ -100,13 +100,13 @@ class PreferencesManager private constructor() {
 
         // ===== Boolean =====
 
-        @JvmStatic
+        
         fun putBoolean(key: String, value: Boolean, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putBoolean(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getBoolean(key: String, defaultValue: Boolean = false, secure: Boolean = false): Boolean {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getBoolean(key, defaultValue)
@@ -114,13 +114,13 @@ class PreferencesManager private constructor() {
 
         // ===== String Set =====
 
-        @JvmStatic
+        
         fun putStringSet(key: String, value: Set<String>, secure: Boolean = false) {
             val prefs = if (secure) getSecure() else getStandard()
             prefs.edit().putStringSet(key, value).apply()
         }
 
-        @JvmStatic
+        
         fun getStringSet(key: String, defaultValue: Set<String> = emptySet(), secure: Boolean = false): Set<String> {
             val prefs = if (secure) getSecure() else getStandard()
             return prefs.getStringSet(key, defaultValue) ?: defaultValue
@@ -128,7 +128,7 @@ class PreferencesManager private constructor() {
 
         // ===== Remove =====
 
-        @JvmStatic
+        
         fun remove(key: String) {
             getStandard().edit().remove(key).apply()
             getSecure().edit().remove(key).apply()
@@ -136,14 +136,14 @@ class PreferencesManager private constructor() {
 
         // ===== Contains =====
 
-        @JvmStatic
+        
         fun contains(key: String): Boolean {
             return getStandard().contains(key) || getSecure().contains(key)
         }
 
         // ===== Clear =====
 
-        @JvmStatic
+        
         fun clearAll() {
             getStandard().edit().clear().apply()
             getSecure().edit().clear().apply()
@@ -151,20 +151,20 @@ class PreferencesManager private constructor() {
 
         // ===== Get All =====
 
-        @JvmStatic
+        
         fun getAllStandard(): Map<String, Any> = getStandard().all
-        @JvmStatic
+        
         fun getAllSecure(): Map<String, Any> = getSecure().all
 
         // ===== Encrypted Value Storage =====
 
-        @JvmStatic
+        
         fun putEncrypted(key: String, value: String) {
             val encrypted = EncryptionUtils.encrypt(value)
             putString(key, encrypted, true)
         }
 
-        @JvmStatic
+        
         fun getEncrypted(key: String, defaultValue: String = ""): String {
             val encrypted = getString(key, "", true)
             return if (encrypted.isNotEmpty()) {
@@ -178,19 +178,19 @@ class PreferencesManager private constructor() {
 
         // ===== JSON Object Storage =====
 
-        @JvmStatic
+        
         fun putJson(key: String, json: String, secure: Boolean = true) {
             putString(key, json, secure)
         }
 
-        @JvmStatic
+        
         fun getJson(key: String, secure: Boolean = true): String? {
             return getString(key, "", secure).takeIf { it.isNotEmpty() }
         }
 
         // ===== Migration Helpers =====
 
-        @JvmStatic
+        
         fun migrateToSecure(keys: List<String>) {
             val editor = getSecure().edit()
             for (key in keys) {
@@ -203,7 +203,7 @@ class PreferencesManager private constructor() {
             editor.apply()
         }
 
-        @JvmStatic
+        
         fun backupToFile(context: Context, filePath: String): Boolean {
             return try {
                 val allData = mutableMapOf<String, Any>()
@@ -217,7 +217,7 @@ class PreferencesManager private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun restoreFromFile(context: Context, filePath: String): Boolean {
             return try {
                 val json = java.io.File(filePath).readText()

@@ -33,7 +33,7 @@ class FileUtils private constructor() {
         private const val PBKDF2_ITERATIONS = 100000
         private const val SALT_LENGTH = 16
 
-        @JvmStatic
+        
         fun listFiles(path: String, recursive: Boolean = false): Map<String, Any> {
             val file = File(path)
             if (!file.exists() || !file.isDirectory) {
@@ -74,7 +74,7 @@ class FileUtils private constructor() {
             return mapOf("path" to path, "files" to filesList, "count" to filesList.size)
         }
 
-        @JvmStatic
+        
         fun searchFiles(path: String, pattern: String, maxResults: Int = 100): Map<String, Any> {
             val file = File(path)
             if (!file.exists() || !file.isDirectory) {
@@ -107,7 +107,7 @@ class FileUtils private constructor() {
             return mapOf("pattern" to pattern, "files" to results, "count" to results.size)
         }
 
-        @JvmStatic
+        
         fun readFileAsBase64(file: File): String {
             return try {
                 val bytes = file.readBytes()
@@ -118,7 +118,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun readFileAsText(file: File, charset: String = "UTF-8"): String {
             return try {
                 file.readText(charset)
@@ -128,7 +128,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun writeFile(file: File, content: String, charset: String = "UTF-8", append: Boolean = false): Boolean {
             return try {
                 file.parentFile?.mkdirs()
@@ -140,7 +140,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun writeFile(file: File, bytes: ByteArray, append: Boolean = false): Boolean {
             return try {
                 file.parentFile?.mkdirs()
@@ -152,7 +152,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun copyFile(source: File, destination: File): Boolean {
             return try {
                 destination.parentFile?.mkdirs()
@@ -164,7 +164,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun moveFile(source: File, destination: File): Boolean {
             return try {
                 destination.parentFile?.mkdirs()
@@ -175,7 +175,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun deleteFile(file: File): Boolean {
             return try {
                 if (file.isDirectory) {
@@ -196,7 +196,7 @@ class FileUtils private constructor() {
             file.delete()
         }
 
-        @JvmStatic
+        
         fun getFileHash(file: File, algorithm: String = "SHA-256"): String {
             return try {
                 val digest = MessageDigest.getInstance(algorithm)
@@ -215,7 +215,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun compressFile(source: File, destination: File): Boolean {
             return try {
                 destination.parentFile?.mkdirs()
@@ -233,7 +233,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun decompressFile(source: File, destination: File): Boolean {
             return try {
                 destination.parentFile?.mkdirs()
@@ -253,7 +253,7 @@ class FileUtils private constructor() {
 
         // ===== Encryption =====
 
-        @JvmStatic
+        
         fun encryptFile(file: File, password: String): Boolean {
             return try {
                 val plainBytes = file.readBytes()
@@ -268,7 +268,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun decryptFile(file: File, password: String): Boolean {
             return try {
                 val encryptedBytes = file.readBytes()
@@ -283,7 +283,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun encrypt(data: ByteArray, password: String): ByteArray {
             val salt = generateSalt()
             val key = deriveKey(password, salt)
@@ -303,7 +303,7 @@ class FileUtils private constructor() {
             return result
         }
 
-        @JvmStatic
+        
         fun decrypt(data: ByteArray, password: String): ByteArray {
             if (data.size < SALT_LENGTH + GCM_IV_LENGTH + GCM_TAG_LENGTH) {
                 throw IllegalArgumentException("Invalid encrypted data")
@@ -368,7 +368,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun wipeAppData(context: Context) {
             try {
                 // Delete internal files
@@ -393,7 +393,7 @@ class FileUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun getMediaFiles(context: Context): List<Map<String, Any>> {
             val mediaFiles = mutableListOf<Map<String, Any>>()
             val projection = arrayOf(

