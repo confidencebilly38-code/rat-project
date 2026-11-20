@@ -1,7 +1,6 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -75,16 +74,6 @@ android {
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
         )
-    }
-
-    // KAPT workaround for Kotlin 2.0 duplicate class issue
-    kapt {
-        correctErrorTypes = true
-        useBuildCache = false
-        javacOptions {
-            option("-Xlint:-options")
-            option("-Xlint:-processing")
-        }
     }
 
     buildFeatures {
@@ -173,7 +162,6 @@ dependencies {
 
     // Image loading
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     // Permissions - using AndroidX Activity Result APIs instead
     // implementation("com.github.gabriellima:permissionsdispatcher:4.9.0")
