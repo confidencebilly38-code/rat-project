@@ -16,6 +16,7 @@ import android.provider.ContactsContract
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.util.Base64
+import android.annotation.SuppressLint
 import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat

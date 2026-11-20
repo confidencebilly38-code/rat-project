@@ -6,7 +6,8 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import com.minimal.rat.service.RatService
-import com.minimal.rat.util.{DeviceUtils, PreferencesManager}
+import com.minimal.rat.util.DeviceUtils
+import com.minimal.rat.util.PreferencesManager
 
 class BootReceiver : BroadcastReceiver() {
     companion object { private const val TAG = "BootReceiver" }
