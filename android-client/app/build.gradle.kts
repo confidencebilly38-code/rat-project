@@ -84,7 +84,7 @@ android {
         buildConfig = true
     }
 
-    packaging {
+    packagingOptions {
         resources {
             excludes += listOf(
                 "META-INF/DEPENDENCIES",
@@ -103,7 +103,7 @@ android {
     }
 
     // Build variants for different C2 configurations
-    flavorDimensions += "c2"
+    flavorDimensions = "c2"
     productFlavors {
         create("development") {
             dimension = "c2"
