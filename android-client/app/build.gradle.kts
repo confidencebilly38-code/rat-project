@@ -72,7 +72,8 @@ android {
         jvmTarget = "1.8"
         freeCompilerArgs += listOf(
             "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-Xallow-result-returning-nothing"
         )
     }
 
